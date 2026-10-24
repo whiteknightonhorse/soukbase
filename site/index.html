@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soukbase · digital goods for AI agents</title>
+<meta name="description" content="Soukbase is a catalogue of digital goods made by people and bought by AI agents. Agents pay in USDC straight to the seller's wallet. In development.">
+<link rel="canonical" href="https://soukbase.com/">
+<link rel="alternate" type="text/markdown" href="https://soukbase.com/index.md">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Soukbase">
+<meta property="og:description" content="Digital goods made by people, bought only by AI agents. In development.">
+<meta property="og:url" content="https://soukbase.com/">
+<meta property="og:image" content="https://soukbase.com/apple-touch-icon.png">
+<meta name="twitter:site" content="@soukbase">
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+gtag('js',new Date());gtag('config','G-T4H1X2HYYJ');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T4H1X2HYYJ"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Soukbase","url":"https://soukbase.com/","logo":"https://soukbase.com/apple-touch-icon.png","email":"support@soukbase.com","sameAs":["https://x.com/soukbase"]}
+</script>
+<style>
+:root{--bg:#EFEAE1;--paper:#FAF7F2;--card:#FFFDF9;--ink:#14201A;--muted:#5E6862;--faint:#8A918C;--line:#E4DDD1;--amber:#A8650F;--amber-2:#C77D1A;--blue:#2B5FD9;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--sans:Inter,system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--amber);text-decoration:none}
+a:hover{color:var(--ink);text-decoration:underline}
+.page{max-width:1280px;margin:0 auto;background:var(--paper);box-shadow:0 1px 0 var(--line);min-height:100vh}
+.strip{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;padding:10px 96px;border-bottom:1px solid var(--line);font:12px var(--mono);color:var(--muted)}
+.strip .lead{color:var(--ink)}
+.strip .note{margin-left:auto}
+header{display:flex;align-items:baseline;gap:20px;padding:36px 96px 0}
+header .name{font-weight:600;font-size:20px;letter-spacing:-.01em}
+header .tag{font-size:14px;color:var(--muted)}
+.hero{padding:112px 96px 0;display:flex;flex-direction:column;gap:28px;align-items:flex-start}
+h1{margin:0;font-weight:500;font-size:40px;line-height:1.2;letter-spacing:-.02em;max-width:22ch;text-wrap:pretty}
+.lede{margin:0;font-size:17px;line-height:1.6;color:var(--muted);max-width:60ch}
+.status{display:inline-flex;gap:10px;align-items:center;font:12px var(--mono);color:var(--ink);border-bottom:1.5px solid var(--ink);padding-bottom:14px;min-width:min(560px,100%)}
+.status i{width:7px;height:7px;background:var(--amber-2);display:inline-block}
+.list{padding:128px 96px 0}
+.list-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 24px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.list-head h2{margin:0;font-size:15px;font-weight:600}
+.list-head span{font-size:13px;color:var(--muted)}
+.row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.row h3{margin:0;font-size:15px;font-weight:500}
+.row p{margin:0;color:var(--muted);max-width:66ch}
+.row .blue{color:var(--blue)}
+.card{margin:96px 96px 0;padding:40px 44px;border:1px solid var(--line);background:var(--card);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:56px}
+.card .col{display:flex;flex-direction:column;gap:14px}
+.label{font:12px var(--mono);color:var(--amber)}
+.card h2{margin:0;font-size:22px;font-weight:500;letter-spacing:-.01em}
+.card p{margin:0;font-size:15px;line-height:1.65;color:var(--muted);max-width:46ch}
+.mail{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-content:start;font-size:14px}
+.mail .k{font:12px var(--mono);color:var(--ink);padding-top:2px}
+footer{margin-top:144px;padding:56px 96px 64px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:80px;font-size:13px;line-height:1.6}
+footer .col{display:flex;flex-direction:column;gap:12px}
+footer .h{font-weight:600}
+footer .m{color:var(--muted)}
+footer b{font-weight:600}
+footer a.ink{color:var(--ink);font-weight:600}
+footer a.blue{color:var(--blue);font-weight:500}
+@media (max-width:760px){
+ .strip,header,.hero,.list,footer{padding-left:16px;padding-right:16px}
+ .strip .note{margin-left:0}
+ header{flex-wrap:wrap;gap:4px 14px;padding-top:24px}
+ .hero{padding-top:56px}
+ h1{font-size:30px}
+ .list{padding-top:72px}
+ .row{grid-template-columns:1fr;gap:4px}
+ .card{margin:64px 16px 0;padding:24px;grid-template-columns:1fr;gap:24px}
+ footer{margin-top:88px;grid-template-columns:1fr;gap:28px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="strip">
+    <span class="lead">For agents</span>
+    <a href="/index.md">/index.md</a>
+    <a href="/llms.txt">/llms.txt</a>
+    <a href="/robots.txt">/robots.txt</a>
+    <span class="note">Same text as this page, in Markdown.</span>
+  </div>
+
+  <header>
+    <span class="name">Soukbase</span>
+    <span class="tag">Humans sell. Agents buy.</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Digital goods made by people, bought only by AI agents.</h1>
+      <p class="lede">Your agent will pay in USDC, straight to the seller's wallet. Soukbase will never hold the money.</p>
+      <span class="status"><i></i>In development. Not open for orders yet.</span>
+    </div>
+
+    <div class="card">
+      <div class="col">
+        <span class="label">Early sellers</span>
+        <h2>Have something an agent would pay for?</h2>
+        <p>We are looking for the first sellers of digital goods. Tell us what you make and we will reply in person.</p>
+      </div>
+      <div class="mail">
+        <span class="k">sellers</span><a href="mailto:partners@soukbase.com">partners@soukbase.com</a>
+        <span class="k">support</span><a href="mailto:support@soukbase.com">support@soukbase.com</a>
+        <span class="k">updates</span><a href="https://x.com/soukbase" rel="me">x.com/soukbase</a>
+      </div>
+    </div>
+
+    <section class="list">
+      <div class="list-head">
+        <h2>What we are building</h2>
+        <span>A catalogue that an agent can read and buy from.</span>
+      </div>
+      <div class="row"><h3>Listings</h3><p>People list digital goods such as datasets, prompt sets, templates, reports and API keys. Every listing states how the item is delivered and how long delivery takes.</p></div>
+      <div class="row"><h3>Capsule</h3><p>An open-source buyer agent. It searches the catalogue, asks for a quote and pays within a budget you set. It pays only when it runs on your machine with your own wallet.</p></div>
+      <div class="row"><h3>Payment</h3><p>Checkout runs on APIbase Integrator, with x402 on Base and MPP on Tempo. The money goes to the seller's wallet in the same transaction.</p></div>
+      <div class="row"><h3>Seller checks</h3><p>Provek will check each seller and give them a <span class="blue">tier</span>. The tier shows what was verified, so an agent can decide how far to trust a listing.</p></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="col">
+      <span class="h">Known gaps</span>
+      <span class="m">We will measure delivery, not the quality of the goods.</span>
+      <span class="m">Refund disputes will be handled by hand at first.</span>
+    </div>
+    <div class="col">
+      <span>Payments powered by <a class="ink" href="https://apibase.pro/">APIbase Integrator</a><br><span class="m">USDC settles in the seller's wallet.</span></span>
+      <span>Seller tiers verified by <a class="blue" href="https://provek.dev/">Provek</a></span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
