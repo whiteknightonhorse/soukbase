@@ -1,0 +1,5 @@
+Contact: mailto:support@soukbase.com
+Expires: 2027-10-24T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://soukbase.com/.well-known/security.txt
+Policy: https://github.com/whiteknightonhorse/soukbase/blob/main/SECURITY.md

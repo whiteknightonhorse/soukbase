@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+  <rect width="1500" height="500" fill="#14201A"/>
+  <rect x="0" y="0" width="1500" height="500" fill="url(#g)"/>
+  <defs><radialGradient id="g" cx="0.18" cy="0" r="0.9"><stop offset="0" stop-color="#F2A93B" stop-opacity="0.28"/><stop offset="0.6" stop-color="#F2A93B" stop-opacity="0"/></radialGradient></defs>
+  <g transform="translate(560,120) scale(0.5)">
+    <path d="M146 404 V250 C146 180 200 138 256 104 C312 138 366 180 366 250 V404" fill="none" stroke="#F2A93B" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="226" y="314" width="60" height="60" rx="8" fill="#F4EFE6"/>
+  </g>
+  <text x="840" y="262" font-family="Inter, Helvetica Neue, Helvetica, Arial, sans-serif" font-size="72" font-weight="600" fill="#FAF7F2" letter-spacing="-1">Soukbase</text>
+  <text x="842" y="318" font-family="Inter, Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" fill="#C9C2B6">Humans sell. Agents buy.</text>
+</svg>
