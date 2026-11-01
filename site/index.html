@@ -4,144 +4,334 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Soukbase · digital goods for AI agents</title>
-<meta name="description" content="Soukbase is a catalogue of digital goods made by people and bought by AI agents. Agents pay in USDC straight to the seller's wallet. In development.">
+<meta name="description" content="Soukbase is a catalogue of digital goods made by people and bought by AI agents. Agents pay in USDC straight to the seller's wallet.">
 <link rel="canonical" href="https://soukbase.com/">
 <link rel="alternate" type="text/markdown" href="https://soukbase.com/index.md">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:title" content="Soukbase">
-<meta property="og:description" content="Digital goods made by people, bought only by AI agents. In development.">
+<meta property="og:description" content="Digital goods made by people, bought by AI agents. USDC goes straight to the seller's wallet.">
 <meta property="og:url" content="https://soukbase.com/">
 <meta property="og:image" content="https://soukbase.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Soukbase: digital goods made by people, bought only by AI agents. In development.">
+<meta property="og:image:alt" content="Soukbase: digital goods made by people, bought by AI agents.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://soukbase.com/og.png">
 <meta name="twitter:site" content="@soukbase">
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
-gtag('js',new Date());gtag('config','G-T4H1X2HYYJ');
+gtag('js',new Date());gtag('config','G-M7T1X84P5Y');
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T4H1X2HYYJ"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M7T1X84P5Y"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Soukbase","url":"https://soukbase.com/","logo":"https://soukbase.com/apple-touch-icon.png","email":"support@soukbase.com","sameAs":["https://x.com/soukbase"]}
 </script>
 <style>
-:root{--bg:#EFEAE1;--paper:#FAF7F2;--card:#FFFDF9;--ink:#14201A;--muted:#5E6862;--faint:#8A918C;--line:#E4DDD1;--amber:#A8650F;--amber-2:#C77D1A;--blue:#2B5FD9;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--sans:Inter,system-ui,-apple-system,sans-serif}
+:root{--paper:#FAF7F2;--card:#FFFDF9;--ink:#14201A;--ink2:#3F4943;--muted:#5B645E;--faint:#6E756F;--line:#E3DDD2;--line2:#EFEAE2;--blue:#2B5FD9;--green:#0B7A44;--amber:#8F5A0F;--err:#B3261E;--sans:Geist,ui-sans-serif,system-ui,-apple-system,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--ease:cubic-bezier(.22,1,.36,1)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
-a{color:var(--amber);text-decoration:none}
-a:hover{color:var(--ink);text-decoration:underline}
-.page{max-width:1280px;margin:0 auto;background:var(--paper);box-shadow:0 1px 0 var(--line);min-height:100vh}
-.strip{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;padding:10px 96px;border-bottom:1px solid var(--line);font:12px var(--mono);color:var(--muted)}
-.strip .lead{color:var(--ink)}
-.strip .note{margin-left:auto}
-header{display:flex;align-items:baseline;gap:20px;padding:36px 96px 0}
-header .name{font-weight:600;font-size:20px;letter-spacing:-.01em}
-header .tag{font-size:14px;color:var(--muted)}
-.hero{padding:112px 96px 0;display:flex;flex-direction:column;gap:28px;align-items:flex-start}
-h1{margin:0;font-weight:500;font-size:40px;line-height:1.2;letter-spacing:-.02em;max-width:22ch;text-wrap:pretty}
-.lede{margin:0;font-size:17px;line-height:1.6;color:var(--muted);max-width:60ch}
-.status{display:inline-flex;gap:10px;align-items:center;font:12px var(--mono);color:var(--ink);border-bottom:1.5px solid var(--ink);padding-bottom:14px;min-width:min(560px,100%)}
-.status i{width:7px;height:7px;background:var(--amber-2);display:inline-block}
-.list{padding:128px 96px 0}
-.list-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 24px;padding-bottom:20px;border-bottom:1px solid var(--line)}
-.list-head h2{margin:0;font-size:15px;font-weight:600}
-.list-head span{font-size:13px;color:var(--muted)}
-.row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
-.row h3{margin:0;font-size:15px;font-weight:500}
-.row p{margin:0;color:var(--muted);max-width:66ch}
-.row .blue{color:var(--blue)}
-.card{margin:96px 96px 0;padding:40px 44px;border:1px solid var(--line);background:var(--card);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:56px}
-.card .col{display:flex;flex-direction:column;gap:14px}
-.label{font:12px var(--mono);color:var(--amber)}
-.card h2{margin:0;font-size:22px;font-weight:500;letter-spacing:-.01em}
-.card p{margin:0;font-size:15px;line-height:1.65;color:var(--muted);max-width:46ch}
-.mail{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-content:start;font-size:14px}
-.mail .k{font:12px var(--mono);color:var(--ink);padding-top:2px}
-footer{margin-top:144px;padding:56px 96px 64px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:80px;font-size:13px;line-height:1.6}
-footer .col{display:flex;flex-direction:column;gap:12px}
-footer .h{font-weight:600}
-footer .m{color:var(--muted)}
-footer b{font-weight:600}
-footer a.ink{color:var(--ink);font-weight:600}
-footer a.blue{color:var(--blue);font-weight:500}
-@media (max-width:760px){
- .strip,header,.hero,.list,footer{padding-left:16px;padding-right:16px}
- .strip .note{margin-left:0}
- header{flex-wrap:wrap;gap:4px 14px;padding-top:24px}
- .hero{padding-top:56px}
- h1{font-size:30px}
- .list{padding-top:72px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/24px var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-underline-offset:3px}
+a:hover{color:var(--ink2)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.skip{position:absolute;left:-999px;top:8px}.skip:focus{left:16px;background:var(--card);padding:8px 12px;border:1px solid var(--line);border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+.strip{border-bottom:1px solid var(--line);font:12px/16px var(--mono);color:var(--muted)}
+.strip .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;padding-top:12px;padding-bottom:12px}
+.strip b{font-weight:500;color:var(--ink)}
+.strip a{color:var(--muted)}
+header .wrap{display:flex;align-items:baseline;gap:16px;padding-top:32px;padding-bottom:32px}
+.name{font-weight:600;font-size:18px;letter-spacing:-.01em}
+.tag{font-size:14px;line-height:20px;color:var(--muted)}
+nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
+nav a{text-decoration:none;color:var(--ink2)}nav a:hover{color:var(--ink);text-decoration:underline}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:64px;align-items:center;padding-top:64px;padding-bottom:96px}
+h1{margin:0 0 24px;font-weight:500;font-size:52px;line-height:56px;letter-spacing:-.025em;max-width:680px;text-wrap:balance}
+.lede{margin:0 0 32px;font-size:18px;line-height:28px;color:var(--ink2);max-width:560px;text-wrap:pretty}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:500 16px/24px var(--sans);padding:12px 20px;border-radius:8px;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),opacity .2s var(--ease)}
+.btn:hover{color:var(--paper);opacity:.9}.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn svg{width:16px;height:16px}
+.panel{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:24px}
+.panel h2{margin:0 0 4px;font-size:16px;font-weight:600}
+.panel p{margin:0;color:var(--ink2);font-size:14px;line-height:20px}
+.panel dl{margin:16px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:14px;line-height:20px}
+.panel dt{font-family:var(--mono);font-size:13px}
+.panel dd{margin:0;color:var(--ink2)}
+.rule{border:0;border-top:1px solid var(--line);margin:0}
+section{padding:96px 0}
+h2.s{margin:0 0 8px;font-weight:500;font-size:34px;line-height:40px;letter-spacing:-.02em}
+.sub{margin:0 0 48px;color:var(--ink2);max-width:640px}
+.sell{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:56px;align-items:start}
+.steps{list-style:none;margin:0;padding:0}
+.step{position:relative;padding:0 0 48px 48px}
+.step::before{content:"";position:absolute;left:13px;top:32px;bottom:8px;width:1px;background:var(--line)}
+.step:last-child::before{display:none}
+.num{position:absolute;left:0;top:0;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font:12px/1 var(--mono);color:var(--ink2);background:var(--paper)}
+.step h3{margin:2px 0 16px;font-size:18px;line-height:24px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.f{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+.f.full{grid-column:1/-1}
+label,.lbl{font-size:14px;line-height:20px;font-weight:500;color:var(--ink)}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline}
+.count{font:12px/16px var(--mono);color:var(--faint)}
+.opt{font-weight:400;color:var(--muted)}
+input[type=text],input[type=email],input[type=url],input[type=number],select,textarea{width:100%;font:16px/24px var(--sans);color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;transition:border-color .2s var(--ease)}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+input:hover,select:hover,textarea:hover{border-color:#CFC7B9}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:0;border-color:var(--blue)}
+textarea{min-height:128px;resize:vertical}
+.mono{font-family:var(--mono)!important;font-size:14px!important}
+.help{font-size:12px;line-height:16px;color:var(--muted)}
+.err{font-size:12px;line-height:16px;color:var(--err);display:none}
+.f.bad input,.f.bad textarea,.f.bad select{border-color:var(--err)}
+.f.bad .err{display:block}
+.suffix{position:relative}.suffix span{position:absolute;right:12px;top:11px;font:12px/24px var(--mono);color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;border:1px solid var(--line);border-radius:8px;padding:3px;gap:2px;background:var(--card)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{font-weight:400;padding:6px 12px;border-radius:6px;cursor:pointer;color:var(--ink2);transition:background .2s var(--ease)}
+.seg input:checked+label{background:var(--ink);color:var(--paper)}
+.seg input:focus-visible+label{outline:2px solid var(--blue);outline-offset:1px}
+.check{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;font-size:14px;line-height:20px;color:var(--ink2)}
+.check input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--ink)}
+.check.bad{color:var(--err)}
+.submit{border-top:1px solid var(--line);padding-top:24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.submit p{margin:0;font-size:14px;line-height:20px;color:var(--ink2);max-width:420px}
+.done{display:none;border:1px solid var(--line);border-left:2px solid var(--green);border-radius:8px;padding:16px 20px;margin-top:24px;font-size:14px;line-height:20px;color:var(--ink2)}
+.done.on{display:block}
+.preview{position:sticky;top:24px}
+.preview .lbl{display:block;margin-bottom:12px}
+.pv h4{margin:0 0 4px;font-size:18px;line-height:24px;font-weight:600;word-break:break-word}
+.pv h4.empty{color:var(--faint);font-weight:500}
+.price{font:14px/20px var(--mono);color:var(--ink2);margin-bottom:16px}
+.pv dl{display:grid;grid-template-columns:80px 1fr;gap:8px 12px;margin:0 0 16px;font-size:14px;line-height:20px}
+.pv dt{color:var(--muted)}.pv dd{margin:0}
+.tier{display:inline-block;font:12px/16px var(--mono);color:var(--blue);border:1px solid var(--blue);border-radius:4px;padding:1px 6px}
+.pv .note{border-top:1px solid var(--line2);padding-top:12px;font-size:12px;line-height:16px;color:var(--muted)}
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:24px 0;border-bottom:1px solid var(--line)}
+.row h3{margin:0;font-size:16px;font-weight:600}
+.row p{margin:0;color:var(--ink2);max-width:640px}
+.blue{color:var(--blue)}
+footer{border-top:1px solid var(--line);font-size:14px;line-height:20px}
+footer .wrap{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:48px;padding-top:48px;padding-bottom:64px}
+footer h4{margin:0 0 8px;font-size:14px;font-weight:600}
+footer p{margin:0 0 8px;color:var(--muted)}
+@media (max-width:900px){
+ .hero .wrap,.sell{grid-template-columns:minmax(0,1fr);gap:40px}
+ .preview{position:static}
+ footer .wrap{grid-template-columns:1fr;gap:24px}
+}
+@media (max-width:600px){
+ .wrap{padding:0 16px}
+ nav{display:none}
+ h1{font-size:36px;line-height:40px}
+ .hero .wrap{padding-top:32px;padding-bottom:64px}
+ section{padding:64px 0}
+ h2.s{font-size:28px;line-height:32px}
+ .grid2,.grid3{grid-template-columns:minmax(0,1fr)!important;gap:0}
+ .step{padding-left:40px}
  .row{grid-template-columns:1fr;gap:4px}
- .card{margin:64px 16px 0;padding:24px;grid-template-columns:1fr;gap:24px}
- footer{margin-top:88px;grid-template-columns:1fr;gap:28px}
 }
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="strip">
-    <span class="lead">For agents</span>
-    <a href="/index.md">/index.md</a>
-    <a href="/llms.txt">/llms.txt</a>
-    <a href="/robots.txt">/robots.txt</a>
-    <span class="note">Same text as this page, in Markdown.</span>
+<a class="skip" href="#sell">Skip to the seller form</a>
+<div class="strip"><div class="wrap">
+  <b>For agents</b>
+  <a href="/index.md">/index.md</a>
+  <a href="/llms.txt">/llms.txt</a>
+  <a href="/robots.txt">/robots.txt</a>
+  <span>Same text as this page, in Markdown.</span>
+</div></div>
+
+<header><div class="wrap">
+  <span class="name">Soukbase</span>
+  <span class="tag">Humans sell. Agents buy.</span>
+  <nav aria-label="Main"><a href="#sell">Sell</a><a href="#how">How it works</a><a href="mailto:support@soukbase.com">Contact</a></nav>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <div>
+    <h1>Digital goods made by people, bought by AI agents.</h1>
+    <p class="lede">Sell datasets, prompt sets, templates and reports. Agents pay in USDC, straight to your wallet. Soukbase never holds the money.</p>
+    <a class="btn" href="#sell">List your first product
+      <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M205.66 149.66l-72 72a8 8 0 0 1-11.32 0l-72-72a8 8 0 0 1 11.32-11.32L120 196.69V40a8 8 0 0 1 16 0v156.69l58.34-58.35a8 8 0 0 1 11.32 11.32Z"/></svg></a>
   </div>
+  <aside class="panel" aria-label="For buyers">
+    <h2>Buying instead? Use Capsule.</h2>
+    <p>The open-source buyer agent. It searches the catalogue, asks for a quote and pays within a budget you set.</p>
+    <dl><dt>local</dt><dd>pays from your own wallet, on your machine.</dd><dt>remote</dt><dd>search and cart only. It cannot pay.</dd></dl>
+  </aside>
+</div></div>
 
-  <header>
-    <span class="name">Soukbase</span>
-    <span class="tag">Humans sell. Agents buy.</span>
-  </header>
+<hr class="rule">
 
-  <main>
-    <div class="hero">
-      <h1>Digital goods made by people, bought only by AI agents.</h1>
-      <p class="lede">Your agent will pay in USDC, straight to the seller's wallet. Soukbase will never hold the money.</p>
-      <span class="status"><i></i>In development. Not open for orders yet.</span>
-    </div>
+<section id="sell" aria-labelledby="sell-h"><div class="wrap">
+  <h2 class="s" id="sell-h">Sell to agents</h2>
+  <p class="sub">Three steps on this page. A person reviews your listing before any agent can see it, and replies by email.</p>
+  <div class="sell">
+    <form id="f" novalidate>
+      <ol class="steps">
+        <li class="step"><span class="num">1</span>
+          <h3>Your wallet</h3>
+          <div class="f" id="f-wallet">
+            <label for="wallet">Wallet address (Base or Tempo)</label>
+            <input id="wallet" name="wallet" type="text" class="mono" placeholder="0x…" autocomplete="off" spellcheck="false" required aria-describedby="wallet-h wallet-e">
+            <span class="help" id="wallet-h">USDC from buyers goes straight to this address. Payments can't be reversed. You will sign a message to prove it's yours during review. No transaction, no gas.</span>
+            <span class="err" id="wallet-e">Enter a 0x address with 40 hex characters.</span>
+          </div>
+        </li>
+        <li class="step"><span class="num">2</span>
+          <h3>Seller profile</h3>
+          <div class="grid2">
+            <div class="f" id="f-name"><label for="name">Display name</label>
+              <input id="name" name="name" type="text" maxlength="60" required aria-describedby="name-h name-e">
+              <span class="help" id="name-h">Shown on your shop and receipts. 2 to 60 characters.</span>
+              <span class="err" id="name-e">Use 2 to 60 characters.</span></div>
+            <div class="f" id="f-handle"><label for="handle">Shop handle</label>
+              <input id="handle" name="handle" type="text" class="mono" placeholder="your-handle" maxlength="40" required aria-describedby="handle-h handle-e">
+              <span class="help" id="handle-h">Your shop address: soukbase.com/s/<span id="handle-p">your-handle</span></span>
+              <span class="err" id="handle-e">3 to 40 characters: lowercase letters, digits and hyphens.</span></div>
+            <div class="f" id="f-email"><label for="email">Contact email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-h email-e">
+              <span class="help" id="email-h">Private. Used only for review and order notices.</span>
+              <span class="err" id="email-e">This email doesn't look complete. Check for a typo.</span></div>
+            <div class="f" id="f-country"><label for="country">Country</label>
+              <input id="country" name="country" type="text" autocomplete="country-name" required aria-describedby="country-h country-e">
+              <span class="help" id="country-h">Where you are based, for tax and sanctions checks.</span>
+              <span class="err" id="country-e">Tell us your country.</span></div>
+            <div class="f full"><label for="repo">Public repo or site URL <span class="opt">· optional</span></label>
+              <input id="repo" name="repo" type="url" class="mono" placeholder="github.com/you/project" aria-describedby="repo-h">
+              <span class="help" id="repo-h">A public repo lifts you to the repo-bound tier (<span class="blue">T2</span>) once Provek confirms it.</span></div>
+          </div>
+          <span class="lbl" style="display:block;margin-bottom:12px">Agreements</span>
+          <label class="check" id="c1"><input type="checkbox" name="agree" required> I accept the Seller Agreement, Acceptable Use and Refund policy.</label>
+          <label class="check" id="c2"><input type="checkbox" name="sanctions" required> I'm not on a sanctions list or in an embargoed country.</label>
+          <label class="check" id="c3"><input type="checkbox" name="public" required> I understand receipts and Provek measurements of my shop are public.</label>
+        </li>
+        <li class="step"><span class="num">3</span>
+          <h3>First listing</h3>
+          <div class="f"><span class="lbl" id="type-l">Type</span>
+            <div class="seg" role="radiogroup" aria-labelledby="type-l">
+              <input type="radio" name="type" id="t1" value="Dataset" checked><label for="t1">Dataset</label>
+              <input type="radio" name="type" id="t2" value="Prompt set"><label for="t2">Prompt set</label>
+              <input type="radio" name="type" id="t3" value="Template"><label for="t3">Template</label>
+              <input type="radio" name="type" id="t4" value="Report"><label for="t4">Report</label>
+              <input type="radio" name="type" id="t5" value="API key or credits"><label for="t5">API key or credits</label>
+            </div></div>
+          <div class="f" id="f-title"><div class="lbl-row"><label for="title">Title</label><span class="count" id="title-c">0 / 120</span></div>
+            <input id="title" name="title" type="text" maxlength="120" placeholder="Postgres migration lint rules" required aria-describedby="title-h title-e">
+            <span class="help" id="title-h">What an agent would search for. Plain and specific.</span>
+            <span class="err" id="title-e">Add a title.</span></div>
+          <div class="f" id="f-desc"><div class="lbl-row"><label for="desc">Description</label><span class="count" id="desc-c">0 / 2000</span></div>
+            <textarea id="desc" name="desc" maxlength="2000" placeholder="What's included, format, size, what it works with." required aria-describedby="desc-h desc-e"></textarea>
+            <span class="help" id="desc-h">Plain facts: what's included, format, size. No instructions to agents, no contact details.</span>
+            <span class="err" id="desc-e">Add a short description.</span></div>
+          <div class="f"><span class="lbl" id="del-l">Delivery</span>
+            <div class="seg" role="radiogroup" aria-labelledby="del-l">
+              <input type="radio" name="delivery" id="d1" value="Instant download" checked><label for="d1">Instant download</label>
+              <input type="radio" name="delivery" id="d2" value="Key from pool"><label for="d2">Key from pool</label>
+              <input type="radio" name="delivery" id="d3" value="Link"><label for="d3">Link</label>
+            </div></div>
+          <div class="grid2 grid3" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            <div class="f"><label for="time">Delivery time</label>
+              <select id="time" name="time"><option>Instant</option><option>Within 1 hour</option><option>Within 24 hours</option><option>Within 72 hours</option></select>
+              <span class="help">A promise. Provek measures it.</span></div>
+            <div class="f" id="f-price"><label for="price">Price</label>
+              <div class="suffix"><input id="price" name="price" type="number" min="1" step="0.01" inputmode="decimal" placeholder="1.00" required aria-describedby="price-h price-e"><span>USDC</span></div>
+              <span class="help" id="price-h">Minimum 1.00 USDC. Paid to your wallet in full.</span>
+              <span class="err" id="price-e">The minimum price is 1.00 USDC.</span></div>
+            <div class="f" id="f-refund"><label for="refund">Refund window</label>
+              <div class="suffix"><input id="refund" name="refund" type="number" min="0" max="30" step="1" value="7" aria-describedby="refund-h refund-e"><span>days</span></div>
+              <span class="help" id="refund-h">0 to 30 days. Shown to agents before they pay.</span>
+              <span class="err" id="refund-e">Use 0 to 30 days.</span></div>
+          </div>
+          <label class="check" id="c4"><input type="checkbox" name="rights" required> I own this or have the right to sell it.</label>
+          <div class="submit">
+            <button class="btn" type="submit">Send for review</button>
+            <p>Listing is free. No platform fee during the pilot. We review every listing before it goes live.</p>
+          </div>
+          <div class="done" id="done" role="status" aria-live="polite"></div>
+        </li>
+      </ol>
+    </form>
 
-    <div class="card">
-      <div class="col">
-        <span class="label">Early sellers</span>
-        <h2>Have something an agent would pay for?</h2>
-        <p>We are looking for the first sellers of digital goods. Tell us what you make and we will reply in person.</p>
+    <aside class="preview" aria-label="Listing preview">
+      <span class="lbl">How an agent sees it</span>
+      <div class="panel pv">
+        <h4 id="pv-title" class="empty">Your title appears here</h4>
+        <div class="price" id="pv-price">— USDC</div>
+        <dl>
+          <dt>Type</dt><dd id="pv-type">Dataset</dd>
+          <dt>Delivery</dt><dd id="pv-del">Instant download</dd>
+          <dt>Time</dt><dd id="pv-time">Instant</dd>
+          <dt>Refund</dt><dd id="pv-refund">7 days</dd>
+          <dt>Seller</dt><dd><span class="tier">T0 declared</span><br><span class="help">T1 once you sign with your wallet.</span></dd>
+        </dl>
+        <div class="note">Not live. Visible to agents after review.</div>
       </div>
-      <div class="mail">
-        <span class="k">sellers</span><a href="mailto:partners@soukbase.com">partners@soukbase.com</a>
-        <span class="k">support</span><a href="mailto:support@soukbase.com">support@soukbase.com</a>
-        <span class="k">updates</span><a href="https://x.com/soukbase" rel="me">x.com/soukbase</a>
-      </div>
-    </div>
+    </aside>
+  </div>
+</div></section>
 
-    <section class="list">
-      <div class="list-head">
-        <h2>What we are building</h2>
-        <span>A catalogue that an agent can read and buy from.</span>
-      </div>
-      <div class="row"><h3>Listings</h3><p>People list digital goods such as datasets, prompt sets, templates, reports and API keys. Every listing states how the item is delivered and how long delivery takes.</p></div>
-      <div class="row"><h3>Capsule</h3><p>An open-source buyer agent. It searches the catalogue, asks for a quote and pays within a budget you set. It pays only when it runs on your machine with your own wallet.</p></div>
-      <div class="row"><h3>Payment</h3><p>Checkout runs on APIbase Integrator, with x402 on Base and MPP on Tempo. The money goes to the seller's wallet in the same transaction.</p></div>
-      <div class="row"><h3>Seller checks</h3><p>Provek will check each seller and give them a <span class="blue">tier</span>. The tier shows what was verified, so an agent can decide how far to trust a listing.</p></div>
-    </section>
-  </main>
+<hr class="rule">
 
-  <footer>
-    <div class="col">
-      <span class="h">Known gaps</span>
-      <span class="m">We will measure delivery, not the quality of the goods.</span>
-      <span class="m">Refund disputes will be handled by hand at first.</span>
-    </div>
-    <div class="col">
-      <span>Payments powered by <a class="ink" href="https://apibase.pro/">APIbase Integrator</a><br><span class="m">USDC settles in the seller's wallet.</span></span>
-      <span>Seller tiers verified by <a class="blue" href="https://provek.dev/">Provek</a></span>
-    </div>
-  </footer>
-</div>
+<section id="how" aria-labelledby="how-h"><div class="wrap">
+  <h2 class="s" id="how-h">How it works</h2>
+  <p class="sub">A catalogue that an agent can read and buy from.</p>
+  <div class="rows">
+    <div class="row"><h3>Listings</h3><p>People list digital goods such as datasets, prompt sets, templates, reports and API keys. Every listing states how the item is delivered and how long delivery takes.</p></div>
+    <div class="row"><h3>Payment</h3><p>Checkout runs on APIbase Integrator, with x402 on Base and MPP on Tempo. The money goes to the seller's wallet in the same transaction.</p></div>
+    <div class="row"><h3>Seller checks</h3><p>Provek checks each seller and gives them a <span class="blue">tier</span>. The tier shows what was verified, so an agent can decide how far to trust a listing.</p></div>
+    <div class="row"><h3>Capsule</h3><p>An open-source buyer agent. It pays only when it runs on your machine with your own wallet.</p></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><h4>Known gaps</h4><p>We measure delivery, not the quality of the goods.</p><p>Refund disputes are handled by hand for now.</p></div>
+  <div><h4>Built on</h4><p>Payments by <a href="https://apibase.pro/">APIbase Integrator</a>. USDC settles in the seller's wallet.</p><p>Seller tiers by <a href="https://provek.dev/">Provek</a>.</p></div>
+  <div><h4>Contact</h4><p><a href="mailto:partners@soukbase.com">partners@soukbase.com</a> · sellers</p><p><a href="mailto:support@soukbase.com">support@soukbase.com</a> · support</p><p><a href="https://x.com/soukbase" rel="me">x.com/soukbase</a></p></div>
+</div></footer>
+
+<script>
+(function(){
+var f=document.getElementById('f'),$=function(i){return document.getElementById(i)};
+function v(n){var e=f.elements[n];return e.length&&e[0]&&e[0].type==='radio'?(f.querySelector('input[name="'+n+'"]:checked')||{}).value:(e.value||'').trim()}
+function upd(){
+ var t=v('title');$('pv-title').textContent=t||'Your title appears here';$('pv-title').className=t?'':'empty';
+ var p=parseFloat(v('price'));$('pv-price').textContent=(isNaN(p)?'—':p.toFixed(2))+' USDC';
+ $('pv-type').textContent=v('type');$('pv-del').textContent=v('delivery');$('pv-time').textContent=v('time');
+ var r=v('refund');$('pv-refund').textContent=(r===''?'—':r)+' days';
+ $('title-c').textContent=$('title').value.length+' / 120';$('desc-c').textContent=$('desc').value.length+' / 2000';
+ $('handle-p').textContent=v('handle')||'your-handle';
+}
+f.addEventListener('input',upd);f.addEventListener('change',upd);
+var rules={wallet:function(x){return /^0x[0-9a-fA-F]{40}$/.test(x)},name:function(x){return x.length>=2&&x.length<=60},
+ handle:function(x){return /^[a-z0-9-]{3,40}$/.test(x)},email:function(x){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(x)},
+ country:function(x){return x.length>=2},title:function(x){return x.length>=1},desc:function(x){return x.length>=1},
+ price:function(x){return x!==''&&parseFloat(x)>=1},refund:function(x){var n=parseInt(x,10);return x!==''&&n>=0&&n<=30}};
+f.addEventListener('submit',function(ev){
+ ev.preventDefault();var first=null;
+ Object.keys(rules).forEach(function(k){var ok=rules[k](v(k)),box=$('f-'+k);if(box){box.classList.toggle('bad',!ok);f.elements[k].setAttribute('aria-invalid',ok?'false':'true')}if(!ok&&!first)first=f.elements[k]});
+ ['c1','c2','c3','c4'].forEach(function(c){var i=$(c).querySelector('input');$(c).classList.toggle('bad',!i.checked);if(!i.checked&&!first)first=i});
+ if(first){first.focus();return}
+ var body=['Seller application from soukbase.com','','Wallet: '+v('wallet'),'Display name: '+v('name'),'Shop handle: '+v('handle'),'Email: '+v('email'),'Country: '+v('country'),'Repo or site: '+(v('repo')||'-'),'',
+ 'First listing','Type: '+v('type'),'Title: '+v('title'),'Delivery: '+v('delivery'),'Delivery time: '+v('time'),'Price: '+parseFloat(v('price')).toFixed(2)+' USDC','Refund window: '+v('refund')+' days','','Description:',v('desc'),'',
+ 'Agreements, sanctions declaration, public receipts and rights: confirmed on the form.'].join('\n');
+ location.href='mailto:partners@soukbase.com?subject='+encodeURIComponent('Seller application: '+v('handle'))+'&body='+encodeURIComponent(body);
+ var d=$('done');d.textContent='Your email app should open with the application filled in. Send it from '+v('email')+' and we reply by email after review. If nothing opened, write to partners@soukbase.com.';d.className='done on';
+});
+upd();
+})();
+</script>
 </body>
 </html>
