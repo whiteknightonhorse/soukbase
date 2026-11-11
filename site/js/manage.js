@@ -6,6 +6,9 @@
   "use strict";
   var d = document, $ = function (i) { return d.getElementById(i); };
   var W = function () { return window.SoukbaseWallet || null; };
+  /* T-0851: a form that comes back with errors starts at its summary; each link in it jumps to the field. */
+  var sum = d.querySelector(".errsum");
+  if (sum) sum.focus();
   Array.prototype.forEach.call(d.querySelectorAll("[data-copy]"), function (b) {
     b.hidden = false;
     b.addEventListener("click", function () {
