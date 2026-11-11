@@ -114,3 +114,18 @@
 .lcol .submit-row{margin-top:0;gap:12px 16px}.lcol .submit-row a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;line-height:20px}
 .lcol .submit-row .btn{min-height:48px}
 @media (max-width:640px){.lcol h1{font-size:24px;line-height:32px}}
+/* T-0852: Preview of the edit page. Printed only by the preview page (under .pv). The switch is two radios; the views follow them as siblings, so ~ and :checked do the work and no script is needed. */
+.lcol.pv{max-width:960px}
+.pv-banner{margin:0;padding:12px 16px;border-radius:8px;background:var(--sand);color:var(--ink);font-size:14px;line-height:20px;font-weight:500}
+.pv-views{position:relative;display:flex;flex-direction:column;gap:20px;min-width:0;margin:0;padding:0;border:0}
+.pv-views>input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.pv-seg{align-self:flex-start;max-width:100%;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.pv-seg label{display:flex;align-items:center;min-height:44px;box-sizing:border-box;padding:0 16px;border-radius:8px;font-size:14px;line-height:20px;font-weight:500;cursor:pointer}
+#pv-page:checked~.pv-seg label[for=pv-page],#pv-md:checked~.pv-seg label[for=pv-md]{background:var(--ink);color:var(--paper)}
+#pv-page:focus-visible~.pv-seg label[for=pv-page],#pv-md:focus-visible~.pv-seg label[for=pv-md]{outline:2px solid var(--ink);outline-offset:2px}
+.pv-frame{min-width:0;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.pv-md{margin:0;min-width:0;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:13px/22px var(--mono);color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.pv-md{display:none}
+#pv-md:checked~.pv-md{display:block}#pv-md:checked~.pv-page{display:none}
+.pv-actions{margin:0}
+@media (max-width:640px){.pv-frame,.pv-md{padding:16px}}
