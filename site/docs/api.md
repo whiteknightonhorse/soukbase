@@ -232,10 +232,14 @@ curl -s https://soukbase.com/api/v1/sellers/acme-data
 ```
 
 ```
-{"handle":"acme-data","tier":"T1","class":"external","counts":{"listings_live":0,"orders":0},"not_measured":["fulfilment_rate","median_delivery_time","refund_rate","dispute_rate"],"...":"..."}
+{"handle":"acme-data","tier":"T1","tier_checked_at":"2026-11-03T09:12:00.000Z","class":"external","wallet_address":"0x1111…1111","site_or_repo_url":null,"counts":{"listings_live":0,"orders":0},"not_measured":["fulfilment_rate","median_delivery_time","refund_rate","dispute_rate"],"updated_at":"2026-11-03T09:12:00.000Z","trust_url":"https://soukbase.com/api/v1/trust/acme-data","listings_url":"https://soukbase.com/api/v1/listings?seller=acme-data","...":"..."}
 ```
 
 `not_measured` lists facts Soukbase does not measure yet. A fact that is not measured is never shown as zero.
+
+`wallet_address` is the seller's bound payout wallet; `trust_url` and `listings_url` are the next calls for an agent that is choosing a seller.
+
+`counts.orders` leaves out test orders and orders paid from the operator's own wallets, the same rule as [/docs/status.md](/docs/status.md).
 
 ### Report a listing or an order
 
