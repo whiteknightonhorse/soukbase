@@ -18,10 +18,31 @@
       ta.remove();
     });
   });
-  /* Times the server printed in UTC (the title keeps the UTC value) show in the reader's local time. */
+  /* Times the server printed in UTC (the title keeps the UTC value) show in the reader's local time, always with the zone name.
+   * Plain data-local: "HH:MM zone", with "D Mon " in front when the local day is not today. data-local="day": "D Mon YYYY HH:MM zone".
+   * Without Intl, formatToParts or a timeZoneName part the server text stays. */
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var zoneOf = function (x) {
+    try {
+      if (typeof Intl === "undefined" || !Intl.DateTimeFormat) return "";
+      var f = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
+      if (!f.formatToParts) return "";
+      var p = f.formatToParts(x);
+      for (var i = 0; i < p.length; i++) if (p[i].type === "timeZoneName" && p[i].value) return p[i].value;
+    } catch (e) { /* keep the server text */ }
+    return "";
+  };
   Array.prototype.forEach.call(d.querySelectorAll("time[data-local]"), function (t) {
     var x = new Date(t.getAttribute("datetime"));
-    if (!isNaN(x.getTime())) t.textContent = ("0" + x.getHours()).slice(-2) + ":" + ("0" + x.getMinutes()).slice(-2);
+    if (isNaN(x.getTime())) return;
+    var z = zoneOf(x);
+    if (!z) return;
+    var hm = ("0" + x.getHours()).slice(-2) + ":" + ("0" + x.getMinutes()).slice(-2);
+    var day = x.getDate() + " " + MON[x.getMonth()];
+    var n = new Date();
+    if (t.getAttribute("data-local") === "day") t.textContent = day + " " + x.getFullYear() + " " + hm + " " + z;
+    else if (x.getFullYear() === n.getFullYear() && x.getMonth() === n.getMonth() && x.getDate() === n.getDate()) t.textContent = hm + " " + z;
+    else t.textContent = day + " " + hm + " " + z;
   });
   /* History: the first time it is opened, mark the notices that were new as read. */
   var hi = $("history");

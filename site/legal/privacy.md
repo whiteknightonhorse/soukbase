@@ -1,4 +1,4 @@
-Version 1.3 - effective 2026-12-12 - sha256 c58a8e7af039334917aa9717eb9d66b95c6638b745c9dc093d270cc766b8eca4
+Version 1.4 - effective 2026-12-12 - sha256 c58a8e7af039334917aa9717eb9d66b95c6638b745c9dc093d270cc766b8eca4
 
 # Soukbase Privacy Policy
 

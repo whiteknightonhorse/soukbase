@@ -1,4 +1,4 @@
-Version 1.3 - effective 2026-12-12 - sha256 b3d529eb17264b16dc5f8445c325e1305ba244bb327a9a7ec031aefb5ac67585
+Version 1.4 - effective 2026-12-12 - sha256 764cf96dec0c450c8f78bcdbee6315c057d82fa9ae1c132e0113f5e8b8ba7b6a
 
 # Soukbase Seller Agreement
 
@@ -54,9 +54,9 @@ j. **Clean files.** The files and links you deliver, and every file you upload t
 
 6.1 A non-exclusive, worldwide, royalty-free licence to display your listing data (text, prices, schema, hashes) on soukbase.com, in its API, its MCP server when available, feeds, llms.txt and discovery indexes, and to cache and index it, while the listing is live and for a reasonable time afterwards for logs and caches.
 6.2 The public listing feed is open data under CC BY 4.0, with attribution "via soukbase.com" and per-item `source_url` and `source_hash`. Others may rebuild an index from the feed. Crawling pages instead of the feed is not allowed (see /legal/aup.md).
-6.3 The Soukbase catalogue stores listing metadata and content hashes. It does not store the goods, license keys or API keys you deliver. You may upload the product file, or the text of an instant delivery, to the Soukbase files service (files.soukbase.com), which scans, encrypts and delivers it: see [/docs/sellers#hosted-delivery](/docs/sellers#hosted-delivery).
+6.3 The Soukbase catalogue stores listing metadata and content hashes. It does not store the goods, license keys or API keys you deliver. You may upload the product file, or the text of an instant delivery, to the Soukbase files service (files.soukbase.com), which scans and encrypts it and delivers the file; a stored text is delivered by the Integrator from your shop: see [/docs/sellers#hosted-delivery](/docs/sellers#hosted-delivery).
 
-6.4 You keep all rights in the files and text you upload; Soukbase gets no ownership in them or in the copies made from them. You give Soukbase a non-exclusive, worldwide, royalty-free licence, while the file is stored and for the periods in 6.7, to store, scan, check and encrypt the file, to make one marked personal copy of it for each paid order, to deliver that copy to the buyer through the order link, and to keep encrypted backup copies. Soukbase shows the file to no one except the buyers of paid orders and, where review of the listing, a report, a notice, a legal request or a delivery fault requires it, the operator.
+6.4 You keep all rights in the files and text you upload; Soukbase gets no ownership in them or in the copies made from them. You give Soukbase a non-exclusive, worldwide, royalty-free licence, while the file is stored and for the periods in 6.7, to store, scan, check and encrypt the file, to make one marked personal copy of it for each paid order, to deliver that copy to the buyer through the order link, to keep encrypted backup copies and, for a stored text, to send it to your shop at the Integrator while your permission for Soukbase to put listings in your shop is live. Soukbase shows the file to no one except the buyers of paid orders and, where review of the listing, a report, a notice, a legal request or a delivery fault requires it, the operator; a stored text is also sent to your own shop as said above.
 
 6.5 The files service delivers for you. You remain the seller, and delivery stays your duty under 3.c and 4.3: if the files service is unavailable, refuses a file or loses it, you deliver again or refund. The files service is a delivery channel, not an archive: keep your own original. Soukbase does not promise to keep, restore or return a stored file.
 

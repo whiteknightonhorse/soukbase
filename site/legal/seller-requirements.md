@@ -1,4 +1,4 @@
-Version 1.3 - effective 2026-12-12 - sha256 b12fccb9f308af2b139ffe29765315eb4e068b6859a7a3c7fec49dee53edfc4b
+Version 1.4 - effective 2026-12-12 - sha256 00addef44ff4a4e818b9d7a9da83b95d2c6d476cb3efb45af7b5658a46de0a35
 
 # Soukbase Seller Requirements
 
@@ -35,7 +35,7 @@ Types: the form labels in section A of /legal/prohibited-goods.md, which says wh
 
 ## 4. How goods are delivered
 
-The catalogue holds no Integrator key, no wallet key and no money; the files service holds the store's webhook secret (encrypted) and the encryption keys for stored files. Files a seller uploads for hosted delivery, and the text of an `instant_text` listing written in the form while uploads are on for that seller, are stored encrypted on files.soukbase.com, scanned and served only through the order link, a file as a per-order personal copy; instant links and your own webhook stay in the seller's shop. Delivery goes through the Integrator in one of four modes:
+The catalogue holds no Integrator key, no wallet key and no money; the files service holds the store's webhook secret (encrypted) and the encryption keys for stored files. Files a seller uploads for hosted delivery are stored encrypted on files.soukbase.com, scanned and served only through the order link, each as a per-order personal copy. The text of an `instant_text` listing written in the form while uploads are on for that seller is stored there too, encrypted and scanned; the Integrator delivers it from the seller's shop, not through an order link. Where the seller has allowed Soukbase to put listings in the shop, Soukbase may read that text from the files service to send it to the seller's shop as the item's payload, and keeps no copy in the catalogue; otherwise the seller puts the text in. Instant links and your own webhook stay in the seller's shop. Delivery goes through the Integrator in one of four modes:
 
 | Mode (form label) | What it is |
 |---|---|

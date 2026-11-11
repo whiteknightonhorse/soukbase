@@ -31,6 +31,10 @@ If the shop shows something different, the listing stays `approved_pending_publi
 
 The request goes to https://apibase.pro, or to https://sandbox.apibase.pro when the seller is flagged for the sandbox. Sandbox sales are mirrored with `livemode` false.
 
+## Remove a listing
+
+To take a listing out of the catalogue, write to support@soukbase.com from the contact address of your seller account and name the listing. A person removes it and a notice appears on your seller page. A removed listing does not come back: create a new one. Soukbase does not change your shop on apibase.pro: the item stays on sale there until you remove it there. Orders already paid are not cancelled (/legal/seller-agreement.md).
+
 ## The four delivery modes
 
 Any category may use any mode; the usual mode for each category is in the category table of /docs/api.md, and the form preselects it when you pick the category (the file mode only when uploads are on for you; otherwise links).
@@ -48,7 +52,7 @@ You fill the placeholder on your own machine. Soukbase keeps the approved link l
 
 ## Telegram notices (optional)
 
-Every notice that appears on your seller page can also arrive in Telegram, as the same sentence; every notice says what happened, who has to act and the next step, and a notice with a step ends with the address of your seller page. Call `POST /api/v1/sellers/me/telegram/link` (session) and open the returned `url` within 10 minutes; press Start in @soukbase_sellers_bot. The link works once, and a new link replaces the previous one. `GET /api/v1/sellers/me` shows `telegram.linked`. `DELETE /api/v1/sellers/me/telegram` unlinks and deletes the stored chat id; blocking the bot only stops delivery. The bot has no buttons and takes no command except Start. What is stored and why: [/legal/privacy](/legal/privacy).
+Every notice that appears on your seller page can also arrive in Telegram, as the same sentence; every notice says what happened, who has to act and the next step, and a notice with a step ends with the address of your seller page. A notice that turns out to be wrong is not deleted: it stays in History, struck through, with the date Soukbase withdrew it, and `withdrawn_at` is set on it in the API. Call `POST /api/v1/sellers/me/telegram/link` (session) and open the returned `url` within 10 minutes; press Start in @soukbase_sellers_bot. The link works once, and a new link replaces the previous one. `GET /api/v1/sellers/me` shows `telegram.linked`. `DELETE /api/v1/sellers/me/telegram` unlinks and deletes the stored chat id; blocking the bot only stops delivery. The bot has no buttons and takes no command except Start. What is stored and why: [/legal/privacy](/legal/privacy).
 
 ## Hosted delivery
 

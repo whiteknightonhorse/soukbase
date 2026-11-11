@@ -1,4 +1,4 @@
-Version 1.3 - effective 2026-12-12 - sha256 36fc11b6494030284252dcd702c6edb5ad2b000873bcf8e4f472068e46be88dd
+Version 1.4 - effective 2026-12-12 - sha256 36fc11b6494030284252dcd702c6edb5ad2b000873bcf8e4f472068e46be88dd
 
 # Soukbase Prohibited Goods List
 

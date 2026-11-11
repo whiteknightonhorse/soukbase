@@ -24,6 +24,8 @@
   };
   var CHECKING_SUB = "Usually under a minute. You can send the listing now; the check finishes by itself.";
   var WAIT_TEXT = "Wait until the upload finishes.";
+  var NOTE_REST = "Replacing the file sends this listing back to review.";
+  var NOTE_CHOSEN = "New file chosen. Saving sends this listing back to review.";
   var ICONS = {
     plain: "",
     now: '<span class="fb-dot"></span>',
@@ -73,6 +75,13 @@
     return describe(cur, "unavailable");
   }
 
+  /* Same rule as fileChosen() in file-block.ts: a file is chosen while it is sent, checked, or ready and not the current file */
+  function chosen(cur, up) {
+    if (!up || up === "unavailable") return false;
+    if (up.state === "uploading" || up.state === "scanning") return true;
+    return up.state === "ready" && !(cur && up.sha256 && up.sha256 === cur.sha256);
+  }
+
   function init(el) {
     var api = el.getAttribute("data-api"), listingId = el.getAttribute("data-listing-id");
     var form = el.closest("form"), row = el.querySelector(".fb"), idWrap = el.querySelector(".fb-id");
@@ -94,7 +103,7 @@
       fmt.value = formatOf(src.mime);
     }
     function picker(label) {
-      return '<label class="btn btn-secondary fb-act fb-pick"' + (cur && listingId && label === "Replace" ? ' aria-describedby="fb-warn"' : "") + '><input type="file" class="fb-file"><span>' + esc(label) + "</span></label>";
+      return '<label class="btn btn-secondary fb-act fb-pick"' + (el.querySelector("#fb-warn") && label === "Replace" ? ' aria-describedby="fb-warn"' : "") + '><input type="file" class="fb-file"><span>' + esc(label) + "</span></label>";
     }
     function wire() {
       var f = row.querySelector(".fb-file");
@@ -114,6 +123,12 @@
       row.innerHTML = '<span class="fb-ic" aria-hidden="true">' + ICONS[s.kind] + '</span><span class="fb-t"><span class="fb-main">' + esc(s.main) + "</span>" + bar + '<span class="fb-sub">' + esc(s.sub) + "</span></span>" +
         (s.btn ? picker(s.btn) : "") + (s.pct === undefined ? "" : '<button type="button" class="fb-cancel">Cancel</button>');
       wire();
+      var note = el.querySelector("#fb-warn"); /* only the edit form of a listing in the shop has it */
+      if (note) {
+        var c = chosen(cur, up);
+        note.className = c ? "fb-warn" : "help";
+        note.innerHTML = (c ? '<span class="fb-bang" aria-hidden="true">!</span>' : "") + esc(c ? NOTE_CHOSEN : NOTE_REST);
+      }
       return s;
     }
     function progress(file, loaded, total) {
