@@ -1,0 +1,21 @@
+/* Seller page: copy-values block, History (T-0781). Loaded after qm.css on manage pages only. */
+.cta{margin:0}
+.fold{border:0}.fold>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:14px;text-decoration:underline;text-underline-offset:4px;color:var(--ink)}.fold[open]>summary{margin-bottom:8px}.fold form{margin:0;max-width:560px}.mg-next .two,.mg-next .cv{max-width:720px}
+.cv{padding:16px;border:1px solid var(--line);border-radius:8px;background:var(--paper);display:flex;flex-direction:column;gap:12px}.cv-h{margin:0;font-size:14px;line-height:20px;font-weight:600}
+.cv-rows{margin:0;display:flex;flex-direction:column;gap:8px}.cv-rows>div{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14px;line-height:20px}
+.cv-rows dt{color:#3F4943;font-size:12px;line-height:16px}.cv-rows dd{margin:0;overflow-wrap:anywhere}
+.cv .btn-copy{height:36px;border-color:#958F84;color:var(--ink)}
+.pub-alt{border:0}.pub-alt>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:14px;text-decoration:underline;text-underline-offset:4px;color:var(--ink)}.pub-alt[open]>summary{margin-bottom:8px}
+.hist{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:0 24px}.hist>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.hist-list{list-style:none;margin:0;padding:0 0 16px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:20px}.hist-list li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px}.hist-list time{color:#3F4943;font-size:12px;line-height:20px}.hist-list .unread span{font-weight:600}
+.hist .help{margin:0 0 16px}.hist-h{margin:0;min-height:44px;display:flex;align-items:center;font-size:14px;font-weight:600}
+.tg{margin:0}.btn-link{background:none;border:0;padding:0;min-height:44px;font:inherit;font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.bdg-line.file{color:#5B645E}
+@media (max-width:640px){
+ .cv-rows>div{grid-template-columns:minmax(0,1fr) auto}.cv-rows dt{grid-column:1/-1}.hist-list li{grid-template-columns:1fr;gap:0}.hist{padding:0 16px}
+}
+/* T-0809: the file picker, the upload bar and Cancel of the File block */
+.fb-pick{position:relative;display:inline-flex;align-items:center;cursor:pointer}.fb-file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.fb-pick:has(.fb-file:focus-visible){outline:2px solid var(--ink,#14201A);outline-offset:2px}
+.fb-bar{display:block;width:100%;height:4px;margin:6px 0 4px;border:0;border-radius:2px;background:#E4DDD1;color:#14201A;overflow:hidden;appearance:none;-webkit-appearance:none}.fb-bar::-webkit-progress-bar{background:#E4DDD1}.fb-bar::-webkit-progress-value{background:#14201A}.fb-bar::-moz-progress-bar{background:#14201A}
+.fb-cancel{min-height:44px;padding:0;border:0;background:transparent;font:inherit;font-size:14px;font-weight:500;color:var(--ink,#14201A);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.submit-row .fb-wait{flex-basis:100%;margin:0}

@@ -1,0 +1,23 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://soukbase.com/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://soukbase.com/openapi.json",
+          "type": "application/json",
+          "title": "Soukbase API (OpenAPI 3.1)"
+        }
+      ]
+    },
+    {
+      "anchor": "https://soukbase.com/api/v1",
+      "service-doc": [
+        { "href": "https://soukbase.com/docs/api.md", "type": "text/markdown", "title": "API guide" }
+      ],
+      "describedby": [
+        { "href": "https://soukbase.com/.well-known/auth.md", "type": "text/markdown", "title": "Authentication" }
+      ]
+    }
+  ]
+}

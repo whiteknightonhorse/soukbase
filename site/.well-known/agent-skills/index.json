@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0/index.json",
+  "skills": [
+    {
+      "name": "soukbase-read",
+      "type": "skill-md",
+      "description": "Search and read Soukbase listings, sellers and trust_get results, and the public listing feed. Reading needs no authentication.",
+      "url": "https://soukbase.com/.well-known/agent-skills/soukbase-read/SKILL.md",
+      "digest": "sha256:a25f22bb9a9bf38ab72dcd343e517c41054995e33162ed2a88d1a57168b9abf5"
+    },
+    {
+      "name": "soukbase-sell",
+      "type": "skill-md",
+      "description": "Become a Soukbase seller and publish a listing through the API, signing in with a wallet signature (EIP-4361). There are no API keys.",
+      "url": "https://soukbase.com/.well-known/agent-skills/soukbase-sell/SKILL.md",
+      "digest": "sha256:c18ccdfdfc2f402f2e02674df61ef78dd813fbd13d9855f88fbd1828e3061364"
+    }
+  ]
+}

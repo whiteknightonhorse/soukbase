@@ -1,0 +1,71 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Soukbase",
+    "identifier": "soukbase.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:soukbase.com:mcp:server",
+      "displayName": "Soukbase MCP Server (read-only)",
+      "type": "application/mcp-server-card+json",
+      "url": "https://soukbase.com/.well-known/mcp/server-card.json",
+      "description": "Read-only Streamable-HTTP MCP server at https://soukbase.com/mcp with six tools: search_listings, get_listing, get_seller, list_categories, get_checkout and trust_get. No sign-in; checkout is not on this domain.",
+      "representativeQueries": [
+        "search a catalogue of digital goods for AI agents over MCP",
+        "check a seller's trust tier before paying at their Integrator shop"
+      ]
+    },
+    {
+      "identifier": "urn:air:soukbase.com:api:openapi",
+      "displayName": "Soukbase REST API (OpenAPI 3.1)",
+      "type": "application/vnd.oai.openapi+json;version=3.1",
+      "url": "https://soukbase.com/openapi.json",
+      "description": "OpenAPI 3.1 specification for the Soukbase API: public reading of listings and sellers, and seller-authenticated writes.",
+      "representativeQueries": [
+        "search Soukbase listings by category and max price"
+      ]
+    },
+    {
+      "identifier": "urn:air:soukbase.com:api:api-catalog",
+      "displayName": "Soukbase API Catalog (RFC 9727)",
+      "type": "application/linkset+json",
+      "url": "https://soukbase.com/.well-known/api-catalog",
+      "description": "RFC 9727 API catalog linking the OpenAPI document, the API guide and the authentication guide."
+    },
+    {
+      "identifier": "urn:air:soukbase.com:llms:llms-txt",
+      "displayName": "Soukbase llms.txt",
+      "type": "text/markdown",
+      "url": "https://soukbase.com/llms.txt",
+      "description": "Plain-language summary of Soukbase for language models: what it is, where the documents are, and the known gaps."
+    },
+    {
+      "identifier": "urn:air:soukbase.com:auth:auth-md",
+      "displayName": "Soukbase authentication guide",
+      "type": "text/markdown",
+      "url": "https://soukbase.com/auth.md",
+      "description": "How a seller signs in with a wallet signature; reading needs no authentication.",
+      "representativeQueries": [
+        "how does a seller authenticate on soukbase.com"
+      ]
+    },
+    {
+      "identifier": "urn:air:soukbase.com:feed:products",
+      "displayName": "Soukbase product feed (JSON)",
+      "type": "application/json",
+      "url": "https://soukbase.com/feed/products.json",
+      "description": "Live listings only, licensed CC BY 4.0. Each item links to its listing page, where checkout happens.",
+      "representativeQueries": [
+        "where does checkout happen for a Soukbase listing"
+      ]
+    },
+    {
+      "identifier": "urn:air:soukbase.com:docs:api-guide",
+      "displayName": "Soukbase API guide",
+      "type": "text/markdown",
+      "url": "https://soukbase.com/docs/api.md",
+      "description": "Human-readable API guide generated from the code: routes, errors and next steps."
+    }
+  ]
+}
