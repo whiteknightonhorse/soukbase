@@ -1,6 +1,6 @@
 /* Soukbase seller forms: progressive enhancement. Without this file every form is a plain POST (see src/web/sell.ts).
  * Wallet contract with site/js/wallet-connect.js (cards 0712, 0798), looked up as window.SoukbaseWallet:
- *   connect({ anyChain, force }): Promise<{ address: string, chainId?: number, manual?: boolean }>
+ *   connect({ anyChain, force, pick }): Promise<{ address: string, chainId?: number, manual?: boolean }>
  *   signMessage(message: string, address: string, { quiet }): Promise<string>   // personal_sign, rejects when the person declines
  * When it is absent the form posts as plain HTML and the next page shows the message and a signature field. */
 (function () {
@@ -161,8 +161,9 @@
     anchor.parentNode.insertBefore(s, anchor.nextSibling);
   }
   /* links: [{ text, href }] or [{ text, click }]; each text is a part of msg, in order, and becomes a link */
+  var existsFor = ""; /* T-0905: the address (lower case) a seller_exists answer was given for */
   function banner(msg, links) {
-    var b = $("form-error"); b.textContent = ""; b.hidden = !msg; if (!msg) return;
+    var b = $("form-error"); b.textContent = ""; b.hidden = !msg; if (!msg) { existsFor = ""; return; }
     b.innerHTML = ICON_WARN; var t = document.createElement("span"); b.appendChild(t);
     var rest = msg;
     (links || []).forEach(function (l) {
@@ -283,10 +284,12 @@
   /* The wallet helper writes the new account into #f-address and fires "input" when the account is switched in the wallet (accountsChanged).
    * What was said about the previous address goes; nothing is sent and no signature is asked: the next press of the button does that. */
   f("address").addEventListener("input", function () {
-    banner(""); shownErr.address = ""; setErr("address", "");
-    var a = val("address"); if (/^0x[0-9a-fA-F]{40}$/.test(a)) $("wallet-short").textContent = short(a);
+    var a = val("address");
+    if (a.toLowerCase() !== existsFor) { banner(""); shownErr.address = ""; setErr("address", ""); }
+    if (/^0x[0-9a-fA-F]{40}$/.test(a)) $("wallet-short").textContent = short(a);
   });
   function useWallet(r) {
+    if (r.address.toLowerCase() !== existsFor) { banner(""); shownErr.address = ""; setErr("address", ""); }
     var chain = CHAINS.indexOf(r.chainId) >= 0 ? r.chainId : CHAINS[0];
     f("address").value = r.address; f("chain_id").value = String(chain);
     $("wallet-short").textContent = short(r.address); $("wallet-chosen").hidden = false;
@@ -320,7 +323,7 @@
           return res.json().catch(function () { return {}; }).then(function (j) {
             if (res.status === 200 && typeof j.message === "string") return j;
             if (res.status === 422 && j.errors) { showErrors(j.errors); throw handled(); }
-            if (j.code === "seller_exists") { banner(T.errors.exists, [{ text: "Sign in", href: "/manage" }, { text: "change the wallet", href: "#wallet-change", click: changeWallet }]); throw handled(); }
+            if (j.code === "seller_exists") { banner(T.errors.exists, [{ text: "Sign in", href: "/manage" }, { text: "change the wallet", href: "#wallet-change", click: changeWallet }]); existsFor = val("address").toLowerCase(); throw handled(); }
             banner(j.error || T.errors.network); throw handled();
           });
         });
@@ -341,7 +344,12 @@
   function changeWallet() {
     if (busy) return;
     if (!wallet()) { manualBox.open = true; f("address").focus(); return; }
-    Promise.resolve().then(function () { return wallet().connect({ anyChain: true, force: true }); }).then(function (r) { if (!r.manual) useWallet(r); }, fail);
+    Promise.resolve().then(function () { return wallet().connect({ anyChain: true, force: true, pick: true }); }).then(function (r) {
+      if (r.manual) return;
+      var again = r.address.toLowerCase() === existsFor;
+      useWallet(r);
+      if (again) { banner(T.errors.sameAccount.replace("{a}", short(r.address)), [{ text: "Sign in", href: "/manage" }]); existsFor = r.address.toLowerCase(); }
+    }, fail);
   }
   $("wallet-change").addEventListener("click", changeWallet);
   form.addEventListener("submit", function (ev) {

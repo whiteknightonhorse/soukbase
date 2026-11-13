@@ -4,10 +4,12 @@
  * sign(stage, values) -> {stage, message, signature}: message from POST /sell/message, then signMessage
  * Each state change is a "soukbase:wallet" event on document. The server builds the message; only ALLOWED methods
  * reach a provider (no transaction). Contract wallets (EIP-1271) are not supported. Nothing is asked of a wallet
- * before the person picks it. */
+ * before the person picks it, with one exception: a page opened at "#signed-out" (after Sign out) asks one wallet, the
+ * remembered one or the only one present, once, wallet_revokePermissions for this site; every answer is ignored. */
 (function () {
   "use strict";
-  var ALLOWED = ["eth_requestAccounts", "eth_chainId", "wallet_switchEthereumChain", "wallet_addEthereumChain", "personal_sign"];
+  var ALLOWED = ["eth_requestAccounts", "eth_chainId", "wallet_switchEthereumChain", "wallet_addEthereumChain", "personal_sign", "wallet_requestPermissions", "wallet_revokePermissions"];
+  var PERMS = [{ eth_accounts: {} }];
   var ADDR = /^0x[0-9a-fA-F]{40}$/, SIG = /^0x[0-9a-fA-F]{130}$/;
   var NETS = {
     8453: { chainName: "Base", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: ["https://mainnet.base.org"], blockExplorerUrls: ["https://basescan.org"] }
@@ -216,13 +218,15 @@
       prom.then(function (v) { clearTimeout(t); resolve(v); }, function (x) { clearTimeout(t); reject(x); });
     });
   }
-  function start(w, anyChain) {
+  function start(w, anyChain, pick) {
     if (chosen && chosen !== w) detach();
     if (mem() !== w.rdns) mem(2);
     chosen = w;
     var p = w.provider, retrySwitch = current === "wrong-chain";
     setState("connecting");
-    return timed(rpc(p, "eth_requestAccounts")).then(function (accts) {
+    /* pick: the wallet shows its own account choice first; 4001 is the person's refusal, any other error means the method is unknown */
+    var perm = pick ? timed(rpc(p, "wallet_requestPermissions", PERMS)).then(null, function (e) { if (e && (e.code === 4001 || e.code === "ACTION_REJECTED")) throw e; }) : Promise.resolve();
+    return perm.then(function () { return timed(rpc(p, "eth_requestAccounts")); }).then(function (accts) {
       var a = accts && accts[0];
       if (typeof a !== "string" || !ADDR.test(a)) throw fail("error", "no_account", "{W} did not share an account. Unlock it, pick an account, and try again.");
       address = a;
@@ -246,7 +250,8 @@
       else if (chosen && ws.indexOf(chosen) >= 0 && RETRY.indexOf(current) >= 0) w = chosen;
       else w = known;
     }
-    return w ? start(w, any) : choose(ws).then(function (c) { return c ? start(c, any) : manualConnect(); });
+    var pick = !!(o && o.pick);
+    return w ? start(w, any, pick) : choose(ws).then(function (c) { return c ? start(c, any, pick) : manualConnect(); });
   }
   function manualConnect() {
     var field = $("f-address"), a = field ? String(field.value).trim() : "";
@@ -340,4 +345,20 @@
   win.SoukbaseWallet = { connect: connect, wallets: wallets, signMessage: signMessage, sign: sign, state: function () { return current; } };
   ask();
   setState("idle");
+
+  /* after Sign out (location.hash "#signed-out"): ask one wallet once to forget this site; answers and errors are ignored */
+  if (win.location.hash === "#signed-out") {
+    try { win.history.replaceState(null, "", win.location.pathname + win.location.search); } catch (x) { /* no history */ }
+    var asked = false, stop = 0;
+    var revoke = function () {
+      if (asked) return;
+      var ws = entries(), e = ws.length === 1 ? ws[0] : byRdns(ws, mem());
+      if (!e) return;
+      asked = true; clearTimeout(stop); win.removeEventListener("eip6963:announceProvider", revoke);
+      try { rpc(e.provider, "wallet_revokePermissions", PERMS).then(null, function () {}); } catch (x) { /* ignored */ }
+    };
+    win.addEventListener("eip6963:announceProvider", revoke);
+    stop = setTimeout(function () { asked = true; win.removeEventListener("eip6963:announceProvider", revoke); }, 3000);
+    revoke();
+  }
 })();

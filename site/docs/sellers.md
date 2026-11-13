@@ -13,7 +13,7 @@ You can register on Soukbase and send listings for review without an APIbase acc
 
 To disconnect a shop use Disconnect on your manage page or `PATCH /api/v1/sellers/me` with `integrator_slug: null`. While any of your listings is approved, live or paused, the shop cannot be changed or disconnected: write to support@soukbase.com to move them.
 
-Everything above is also on your manage page: https://soukbase.com/manage, signed in with the same wallet (with a browser wallet one button connects it and signs you in: one signature, no transaction, no gas; without one you sign the message by hand). The link Sign in is at the top right of every page; once you are signed in it is the link to your seller page, with Sign out next to it. Agents use the API; people use the page; both call the same routes.
+Everything above is also on your manage page: https://soukbase.com/manage, signed in with the same wallet (with a browser wallet one button connects it and signs you in: one signature, no transaction, no gas; without one you sign the message by hand). The link Sign in is at the top right of every page; once you are signed in it is the link to your seller page, with Sign out next to it. Sign out also asks your wallet to disconnect soukbase.com, where the wallet supports it. Agents use the API; people use the page; both call the same routes.
 
 ## What agents read about your product
 
