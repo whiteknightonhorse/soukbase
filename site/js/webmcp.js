@@ -12,23 +12,28 @@
   var tools = [
     {
       name: "searchListings",
-      description: "Search live Soukbase listings by words, category, maximum price in USDC and delivery mode; returns items and next_cursor.",
+      description: "Search live listings; call list_categories first. Give category, price_max and a small limit (5 is enough to choose). Returns compact items, total and next_cursor; getListing reads the one you chose.",
       inputSchema: {
         type: "object",
         properties: {
           q: { type: "string", maxLength: 200, description: "Words to search in title, description and category." },
           category: { type: "string", enum: ["dataset", "prompt_set", "template", "report", "ebook_audio", "own_api_credits", "skill", "mcp_server", "workflow", "software", "creative_asset", "knowledge_base", "testing_qa", "business_intelligence", "localization", "education"] },
-          price_max: { type: "string", pattern: "^\\d+\\.\\d{2}$", description: "Maximum price in USDC with two decimals, for example 5.00." },
+          price_min: { type: "string", pattern: "^\\d{1,6}(\\.\\d{1,2})?$", description: "Minimum price in USDC, for example 3 or 3.50." },
+          price_max: { type: "string", pattern: "^\\d{1,6}(\\.\\d{1,2})?$", description: "Maximum price in USDC, for example 3, 3.5 or 5.00." },
           delivery_mode: { type: "string", enum: ["instant_text", "instant_links", "webhook", "hosted_file"] },
-          seller: { type: "string", description: "Only listings of this seller handle." }
+          seller: { type: "string", description: "Only listings of this seller handle." },
+          sort: { type: "string", enum: ["relevance", "newest", "price_asc", "price_desc"], description: "relevance needs q; price_asc gives the lowest price first." },
+          view: { type: "string", enum: ["compact", "full"], description: "compact (default) or full; full is large." },
+          limit: { type: "integer", minimum: 1, maximum: 100, description: "Page size; 5 is enough to choose." }
         },
         additionalProperties: false
       },
       annotations: { readOnlyHint: true },
       execute: function (a) {
-        var p = new URLSearchParams(), k, keys = ["q", "category", "price_max", "delivery_mode", "seller"];
+        var p = new URLSearchParams(), k, keys = ["q", "category", "price_min", "price_max", "delivery_mode", "seller", "sort", "view"];
         a = a || {};
         for (var i = 0; i < keys.length; i++) { k = keys[i]; if (typeof a[k] === "string" && a[k] !== "") p.set(k, a[k]); }
+        if (typeof a.limit === "number") p.set("limit", String(a.limit));
         var s = p.toString();
         return call("/api/v1/listings" + (s ? "?" + s : "")).then(text);
       }

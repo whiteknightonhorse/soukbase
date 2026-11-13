@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "Search and read Soukbase listings, sellers and trust_get results, and the public listing feed. Reading needs no authentication.",
       "url": "https://soukbase.com/.well-known/agent-skills/soukbase-read/SKILL.md",
-      "digest": "sha256:a25f22bb9a9bf38ab72dcd343e517c41054995e33162ed2a88d1a57168b9abf5"
+      "digest": "sha256:99217acb19558c4be0a7fa68a06188b58e6ef4324724c298df17a048a3b2929b"
     },
     {
       "name": "soukbase-sell",

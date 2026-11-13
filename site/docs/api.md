@@ -23,7 +23,7 @@ All bodies are JSON. All prices are strings with two decimals in USDC, for examp
 | GET /api/v1/sellers/{handle} | none | Read a seller's public record |
 | POST /api/v1/listings | session token | Create a listing and send it to review |
 | PATCH /api/v1/listings/{id} | session token | Change a listing you own |
-| GET /api/v1/listings | none | Search live listings |
+| GET /api/v1/listings | none | Search live listings: compact items and a total, price_min, price_max and sort; view=full for full records (see Narrow first) |
 | GET /api/v1/listings/{id} | none (token adds owner view) | Read one listing (JSON plus schema.org JSON-LD; a live one carries the integrator block: slug, sku, quote_url, quote_body) |
 | POST /api/v1/listings/{id}/publish-check | session token | Check again: start the publish check of an approved listing over (once an hour) |
 | GET /api/v1/listings/{id}/publish-request | session token | Get the Integrator catalog request for an approved listing |
@@ -73,7 +73,7 @@ An open listing is one that is in review, approved and waiting to publish, live 
 - Hosted files: at most 1 GiB per seller across files that are ready or being checked, one file per listing; an upload link from `POST /api/v1/sellers/me/uploads` works for 60 minutes and for one upload. The reasons a file can be rejected are in "Upload reasons" below.
 - Stored text (`instant_text` with uploads on, sent as `{text}` to `POST /api/v1/sellers/me/uploads`): up to 16384 bytes of UTF-8, counted in the same quota.
 - A session token lasts 24 hours; sign in again after that.
-- Search pages: 20 items by default, at most 100 (`limit`).
+- Search pages: 20 items by default, at most 100 (`limit`); the items are compact unless `view=full`, so a page of 5 is enough to choose (see Narrow first).
 
 ## Examples
 
@@ -178,15 +178,21 @@ curl -s -X PATCH https://soukbase.com/api/v1/listings/LISTING_ID \
 
 Changing price, stock or refund window keeps a live listing live and the new version is checked again. Changing title, description, category, links, delivery mode, delivery time or `attributes` creates a new version in review and takes the live version down. `attributes` is replaced as a whole object, and it is checked against the category the listing has after the change: when you change the category, send `attributes` with the new category's `category_specific` fields in the same request. A rejected listing is submitted again by any edit. `stock` is only on this route (`null` means not limited).
 
+### Narrow first
+
+Do not read the whole catalogue. 1. `GET /api/v1/categories` (MCP `list_categories`): every category with its live count and price range. 2. `GET /api/v1/listings?category=<id>&price_max=<usdc>&limit=5` (MCP `search_listings`): compact items and `total`; add `q`, `price_min`, `sort=price_asc`. 3. `GET /api/v1/listings/{id}` (MCP `get_listing`) for the listing you chose: the full record. `/feed/products.jsonl` is the bulk export for mirrors and indexes, not a search. Measured 2026-11-13 on soukbase.com with 5 live listings: categories 2911 B, a filtered page of 5 compact items 810 B, one full listing 4445 B; the same page with full items is 4486 B.
+
 ### Search listings
 
 ```
-curl -s 'https://soukbase.com/api/v1/listings?q=prompts&category=prompt_set&price_max=10.00&delivery_mode=instant_text'
+curl -s 'https://soukbase.com/api/v1/listings?q=prompts&category=prompt_set&price_max=10&sort=price_asc&limit=5'
 ```
 
 ```
-{"items":[{"id":"...","title":"...","price_usdc":"5.00","currency":"USDC","links_count":0,"jsonld":{"@type":"Product","...":"..."}}],"next_cursor":null}
+{"items":[{"id":"...","slug":"...","url":"https://soukbase.com/l/...","category":"prompt_set","title":"...","purpose":"...","price_usdc":"5.00","currency":"USDC","delivery_mode":"instant_text","delivery_time":"instant","licence":"CC-BY-4.0","seller":{"handle":"acme-data","tier":"T1"},"updated_at":"..."}],"total":1,"next_cursor":null}
 ```
+
+`price_min` and `price_max` take `3`, `3.5` or `3.00` (up to six digits, at most two decimals); `price_min` above `price_max` is `validation_failed` on `price_min`. `sort` is `relevance` (the default with `q`, and it needs `q`), `newest` (the default without `q`), `price_asc` or `price_desc`; price orders break ties by id. `total` is how many live listings match the filters, whatever `limit` and `cursor` are. An item is compact by default: `id`, `slug`, `url`, `category`, `title`, `purpose`, `price_usdc`, `currency`, `delivery_mode`, `delivery_time`, `licence` (when the listing states one), `seller` (`handle`, `tier`) and `updated_at`. `view=full` returns the whole record of each listing, the same as `GET /api/v1/listings/{id}` without the owner fields; it is large, so use it for a page of a few items.
 
 Only live listings are listed; listings of a seller flagged for the sandbox are not in search, the feed, llms.txt or the sitemap, and open by direct address with the record field `sandbox: true` and the test line ([/docs/sellers.md](/docs/sellers.md#the-publish-flow)). `seller`: a seller handle; only that seller's listings; an unknown handle answers `seller_not_found` (`GET /api/v1/listings?seller=HANDLE`). Pass `next_cursor` back as `cursor` for the next page. Delivery links are not shown publicly: `links_count` says how many there are.
 
@@ -354,7 +360,7 @@ Statuses `started`, `scanning`, `ready`, `rejected`, `expired` and `deleted` are
 | `tier_too_low` | 403 | Tier T0 cannot list. | Complete the wallet signature step. |
 | `listing_limit_reached` | 422 | Open listing cap for the seller tier reached. | Remove or wait for a decision on an existing listing. |
 | `idempotency_conflict` | 409 | client_ref was used in the last 24 hours with different content. | Use a new client_ref or resend the same body. |
-| `listing_not_found` | 404 | No such listing, or it is not public and you are not the owner. | Use a listing id or slug from GET /api/v1/listings?q= or /feed/products.jsonl. |
+| `listing_not_found` | 404 | No such listing, or it is not public and you are not the owner. | Use a listing id or slug from GET /api/v1/listings?q= |
 | `seller_not_found` | 404 | No such seller. | Check the handle. |
 | `order_not_found` | 404 | No such order. | Check order_id. |
 | `not_publishable` | 409 | Listing is not approved_pending_publish. | Wait for approval; poll GET /api/v1/listings/{id}. |

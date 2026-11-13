@@ -37,8 +37,9 @@
 .card .kv dd.good{color:#0B7A44}.card .kv dd.warn{color:#8F5A0F}.card .kv .help{display:block;margin-top:2px;font-size:13px;line-height:20px;color:var(--muted)}
 .card-edit{align-self:flex-start;margin-top:auto;height:44px;padding:0 16px;font-size:14px}
 .shop-note{margin:0;font-size:14px;line-height:20px;max-width:560px}
-.shop-btns{display:flex;flex-wrap:wrap;gap:8px}.shop-btns form{margin:0}.change[open]{flex:1 1 100%}
-.shop-btns .btn,.shop-btns summary.btn{height:44px;padding:0 16px;font-size:14px;list-style:none}.shop-btns summary::-webkit-details-marker{display:none}
+.shop-btns{display:flex;flex-wrap:wrap;gap:8px}.shop-btns form{margin:0}
+.shop-more>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}.shop-more[open]>summary{margin-bottom:8px}
+.shop-btns .btn{height:44px;padding:0 16px;font-size:14px}
 .lock-note{margin:0;font-size:13px;line-height:20px;color:var(--muted)}
 .mg-list{display:flex;flex-direction:column;gap:16px}
 .mg-list .table-wrap{border:1px solid var(--line);border-radius:12px;background:var(--card);margin:0;overflow:hidden}
@@ -138,3 +139,8 @@
 /* T-0886: "About the product" (always visible), the hidden Delivery time, the help line under a group heading */
 .lcol .field[hidden]{display:none}.lcol .about{display:flex;flex-direction:column;gap:16px;margin:0}.lcol .about-h{font-size:16px;line-height:24px;font-weight:600;margin:8px 0 0}
 .lcol .about .catf legend{font-size:14px;line-height:20px;font-weight:500;color:var(--ink);margin-bottom:8px}
+/* T-0900: each category chip carries its own line (the category's hint), readable without hover; two columns on a wide screen, one on a phone */
+.lcol .cchip span{height:auto;min-height:56px;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:8px 12px;text-align:left}
+.lcol .cchip .cl{font-weight:500}.lcol .cchip .ch{font-size:12px;line-height:16px;font-weight:400;color:var(--muted)}
+.lcol .cchip input:checked+span .ch{color:inherit;opacity:.85}
+@media (max-width:640px){.lcol .cchips{grid-template-columns:minmax(0,1fr)}}

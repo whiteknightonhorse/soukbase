@@ -16,6 +16,8 @@ Before paying, an agent compares the quote's payee with the wallet the seller si
 
 The open-source buyer agent, Capsule, will be published here when it is ready.
 
+Agents narrow first: categories with live counts and price ranges, a compact filtered search, then one listing. Sizes measured on the live site: https://soukbase.com/docs/api.md#narrow-first
+
 ## Pages
 
 Every page is HTML for people and Markdown for agents: send `Accept: text/markdown`, or add `.md` to the path where a route below lists it. A Markdown response names its HTML page in a `Link: <...>; rel="canonical"` header, and an HTML page names its Markdown form in `Link: <...>; rel="alternate"`. The API is described in [/docs/api](https://soukbase.com/docs/api).
