@@ -41,7 +41,7 @@ Only a wallet that has been bound to a seller can sign in. Binding happens when 
 The Expiration Time of this message is the lifetime of the wallet binding: it is stored as `expires_at` and read by /api/v1/trust. The form signs for 365 days, the longest the server accepts. When it has passed, sign-in answers `no_active_binding` and the trust routes show `expired`. To renew, sign a new `seller_bind` message and send the create-seller request again with the same handle: the new binding replaces the old one and accepts the documents at their current hashes. The Integrator shop is not part of the message: set it with PATCH /api/v1/sellers/me (checked against the shop at that moment, see /docs/sellers.md).
 
 ```
-I bind payout wallet <address> to soukbase.com/s/<handle> and accept the Soukbase Seller Agreement, AUP and Refund policy (hashes in resources). Signing is free: it sends no transaction and moves no funds.
+I bind payout wallet <address> to soukbase.com/s/<handle> and accept the Soukbase Seller Agreement, Acceptable Use Policy and Refund policy listed below. Signing is free: it sends no transaction and moves no funds.
 ```
 
 ```

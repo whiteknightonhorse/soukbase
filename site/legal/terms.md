@@ -1,4 +1,4 @@
-Version 1.4 - effective 2026-12-12 - sha256 e0a214c1097cf23da6d7ae29565c9754709d2ecd6b123f0ac693624a5f6bc05b
+Version 1.5 - effective 2026-12-12 - sha256 e0a214c1097cf23da6d7ae29565c9754709d2ecd6b123f0ac693624a5f6bc05b
 
 # Soukbase Terms for Buyers and Agents
 

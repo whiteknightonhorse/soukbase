@@ -6,7 +6,6 @@ All bodies are JSON. All prices are strings with two decimals in USDC, for examp
 
 ## Routes
 
-<!-- generated:routes -->
 | Route | Auth | What it does |
 |---|---|---|
 | POST /api/v1/auth/nonce | none | Get a single-use nonce for a sign-in message |
@@ -34,9 +33,9 @@ All bodies are JSON. All prices are strings with two decimals in USDC, for examp
 | GET /api/v1/receipts/{order_id} | none | Read one public receipt by the Integrator order id (no amount) |
 | POST /api/v1/reports | none | Report a listing or an order |
 | GET /api/v1/stats | none | Public counts: sellers, listings, paid orders by class (what each means: /docs/status.md) |
+| GET /api/v1/categories | none | The category tree: every category with a hint, its live count and its price range (min, median, max); the first call of an agent |
 | GET /aup.json | none | The prohibited-goods rule list, check ids and its ruleset_hash |
 | GET /openapi.json | none | This API as OpenAPI 3.1 |
-<!-- /generated:routes -->
 
 `POST /hooks/telegram` is the operator's review webhook and `POST /hooks/telegram-sellers` is the seller bot's (it only links a chat to a seller, see [/docs/sellers.md](/docs/sellers.md)). Each accepts only Telegram's calls with its own secret header and answers 403 to anyone else; neither is part of the API.
 
@@ -44,7 +43,6 @@ All bodies are JSON. All prices are strings with two decimals in USDC, for examp
 
 ## Limits
 
-<!-- generated:limits -->
 **Rate limits.** Every answer carries `RateLimit-Limit`, `RateLimit-Remaining` and `RateLimit-Reset`; a refused request gets HTTP 429 and `Retry-After` (seconds until the window resets). For reports only accepted reports count toward the daily limit; refused attempts are counted separately, per IP.
 
 | Group | Limit | Counted per | Applies to |
@@ -76,7 +74,6 @@ An open listing is one that is in review, approved and waiting to publish, live 
 - Stored text (`instant_text` with uploads on, sent as `{text}` to `POST /api/v1/sellers/me/uploads`): up to 16384 bytes of UTF-8, counted in the same quota.
 - A session token lasts 24 hours; sign in again after that.
 - Search pages: 20 items by default, at most 100 (`limit`).
-<!-- /generated:limits -->
 
 ## Examples
 
@@ -134,7 +131,7 @@ curl -s https://soukbase.com/api/v1/handles/acme-data
 
 ### Create a listing
 
-New listings go to review. What is checked, and what a person decides, is in /docs/moderation.md.
+New listings go to review. What is checked, and what a person decides, is in /docs/moderation.md. A price stated in the title or description must be the listing's price: an amount written `$5` or `USD 5` that follows `price`, `priced`, `cost` or `costs` (also through `:`, `=`, a dash, `is`, `of`, `at`, `now`, `only`, `just`) or stands next to `only` or `just`, or is directly followed by `tier` (`$5 tier`, `$0.75 micro-tier`), is compared with `price_usdc` on create and on every change of the title, the description or the price, and a different amount is refused with 422 `price_claim_mismatch`; other amounts in the text (examples, fees, face values) are not checked.
 
 ```
 curl -s https://soukbase.com/api/v1/listings \
@@ -148,15 +145,14 @@ curl -s https://soukbase.com/api/v1/listings \
 
 `attributes` is what an agent reads to judge the product, and it is required on a new listing. `purpose` (one line) and `licence` (`{"spdx": "<SPDX id>"}`, or `{"spdx": "custom", "text": "..."}`) must be filled in. The other fields are optional: `tasks[]`, `works_with[]` (models or agents), `requirements`, `formats[]`, `contents`, `size` (`bytes`, `rows`, `pages`, `minutes`), `language[]` (BCP 47 tags), `product_updated_at` (YYYY-MM-DD), `ai_generated` (true or false), `tested_with[]` (`{model, date, result}`), `sample` (`{"url": "https://..."}` or `{"text": "..."}`), `do_not_use_for`, and `category_specific`, which holds the fields of the listing's category from the table below. Any other key is refused, and the size limits are under Limits. Everything in `attributes` is the seller's own statement. Soukbase adds `verified_by_purchase` on output: `false`, or the date of Soukbase's own test purchase of the current version. A seller cannot set it, and a material edit resets it to `false`.
 
-Categories (`category`, the same list as MCP `list_categories`; "usual delivery" is a suggestion, every category accepts every delivery mode):
+Categories (`category`; the list with live counts and prices is `GET /api/v1/categories` (MCP `list_categories`); "usual delivery" is a suggestion, every category accepts every delivery mode):
 
-<!-- generated:categories -->
 | `category` | Label | Group | Usual delivery | `category_specific` fields | Browse |
 |---|---|---|---|---|---|
 | `dataset` | Dataset | data | `instant_links` | `schema {fields[], primary_key}`, `rows (integer >= 0)`, `update_frequency`, `sources[]` | /c/dataset |
 | `prompt_set` | Prompt set | agent | `instant_text` | `models[]`, `count (integer >= 1)` | /c/prompt_set |
 | `template` | Template | code | `instant_links` | none | /c/template |
-| `report` | Report | data | `instant_links` | `prepared_at`, `methodology`, `sources[]` | /c/report |
+| `report` | Report | data | `instant_links` | `prepared_at (date YYYY-MM-DD)`, `methodology`, `sources[]` | /c/report |
 | `ebook_audio` | E-book or audio | content | `hosted_file` | `pages (integer >= 1)`, `minutes (integer >= 1)`, `narrator` | /c/ebook_audio |
 | `own_api_credits` | API key or credits | code | `webhook` | `endpoint`, `quota`, `rate_limit` | /c/own_api_credits |
 | `skill` | Agent skill | agent | `instant_links` | `version`, `runtime`, `tools[]`, `install` | /c/skill |
@@ -169,7 +165,6 @@ Categories (`category`, the same list as MCP `list_categories`; "usual delivery"
 | `business_intelligence` | Business intelligence | data | `instant_links` | none | /c/business_intelligence |
 | `localization` | Localization | content | `instant_links` | none | /c/localization |
 | `education` | Education | content | `instant_links` | none | /c/education |
-<!-- /generated:categories -->
 
 Delivery modes: `instant_text`, `instant_links`, `webhook`, `hosted_file`. Delivery times: `instant`, `1h`, `24h`, `72h`; the listing form on your seller page (`/s/<handle>/manage/listings/new`) asks for a time only with `webhook` and sends `instant` for the other modes. The catalogue never stores the delivered goods: links and webhook results stay in your own Integrator shop, and a `hosted_file` file, or the text of an `instant_text` listing when `hosted_files` is true for you, is held by the files service (send its `upload_id`; see Upload reasons below). A `hosted_file` delivery is a personal copy that carries the order number, the payer wallet address and the transaction hash ([Terms 4.3](/legal/terms.md)).
 
@@ -193,7 +188,7 @@ curl -s 'https://soukbase.com/api/v1/listings?q=prompts&category=prompt_set&pric
 {"items":[{"id":"...","title":"...","price_usdc":"5.00","currency":"USDC","links_count":0,"jsonld":{"@type":"Product","...":"..."}}],"next_cursor":null}
 ```
 
-Only live listings are listed. `seller`: a seller handle; only that seller's listings; an unknown handle answers `seller_not_found` (`GET /api/v1/listings?seller=HANDLE`). Pass `next_cursor` back as `cursor` for the next page. Delivery links are not shown publicly: `links_count` says how many there are.
+Only live listings are listed; listings of a seller flagged for the sandbox are not in search, the feed, llms.txt or the sitemap, and open by direct address with the record field `sandbox: true` and the test line ([/docs/sellers.md](/docs/sellers.md#the-publish-flow)). `seller`: a seller handle; only that seller's listings; an unknown handle answers `seller_not_found` (`GET /api/v1/listings?seller=HANDLE`). Pass `next_cursor` back as `cursor` for the next page. Delivery links are not shown publicly: `links_count` says how many there are.
 
 ### Read one listing
 
@@ -205,7 +200,7 @@ The answer includes `attributes` (see Create a listing; `null` for a listing mad
 
 ### Your seller record and your shop
 
-`GET /api/v1/sellers/me` (session) returns your private record: profile, `wallet_address`, `binding_expires_at`, the `shop` block (`status` is `not_connected`, `connected`, `unverified` or `mismatch`; `payout.next_check_at` is when the daily re-check of the shop's payout wallet runs next, null while no listing of yours is live; `payout.problem` is the message about a payout mismatch (`cause`, `step`, `who`, `act`) and is null unless `status` is `mismatch`; `catalog_grant_at` is an ISO time or null: when you allowed Soukbase to put your approved listings in your shop (a partner-mode grant at APIbase); null when you have not, or after you revoked it), `connect_values` (`name`, `site_url`, `slug_suggestion`, `country`, `wallet`: what to paste when you register your shop) and your listings in every status but removed. Each listing carries `state` (`kind` is `done`, `now`, `auto`, `attention` or `later`: finished, your step, runs by itself, needs a fix from you, waiting for an earlier step; with a short `label` and one sentence `detail`) and `publish_check` (`last_at`, `next_at` = last check + 10 minutes while it still watches the listing, `result` is `waiting`, `mismatch`, `payout_mismatch`, `timeout` or `live`, `fields` the values the shop shows differently, `problem` the message about the problem (cause, then `step`), `who` who acts (`seller`, `soukbase` or `nobody`) and `act` where the step is done (`edit`, `command`, `recheck`, `connect`, `sell`, `apibase`, `support`, `page`, `allow`; null when there is no control), all four null without a problem; `POST /api/v1/listings/{id}/publish-check` is Check again; null for a draft, a listing in review and a rejected listing). The response also has your `notices` (newest 50: `id`, `kind`, `text`, `listing_id`, `created_at`, `read_at`, `withdrawn_at`: null while the notice is in force, the time Soukbase withdrew it when it was sent in error) `telegram.linked` (whether a Telegram chat is linked for notices, see [/docs/sellers.md](/docs/sellers.md)) `hosted_files` (true when uploads are on for you) and `files_wired` (true when file delivery is connected for your shop); what both mean: [/docs/sellers.md](/docs/sellers.md#hosted-delivery). A notice is written when a listing is approved, rejected (by a reviewer or by an automatic check), goes live, is hidden after a re-check or stops on a problem, and when your shop connection is released; `POST /api/v1/sellers/me/notices/read` with `{"ids": [...]}` marks notices read and answers `{"marked": n}`. `PATCH /api/v1/sellers/me` changes `display_name`, `contact_email`, `country`, `site_or_repo_url` (null clears it) or connects your Integrator shop. `integrator_slug: null` disconnects the shop (409 `shop_in_use` while a listing is approved, live or paused):
+`GET /api/v1/sellers/me` (session) returns your private record: profile, `wallet_address`, `binding_expires_at`, the `shop` block (`status` is `not_connected`, `connected`, `unverified` or `mismatch`; `payout.next_check_at` is when the daily re-check of the shop's payout wallet runs next, null while no listing of yours is live; `payout.problem` is the message about a payout mismatch (`cause`, `step`, `who`, `act`) and is null unless `status` is `mismatch`; `catalog_grant_at` is an ISO time or null: when you allowed Soukbase to put your approved listings in your shop (a partner-mode grant at APIbase); null when you have not, or after you revoked it), `connect_values` (`name`, `site_url`, `slug_suggestion`, `country`, `wallet`: what to paste when you register your shop) and your listings in every status but removed. Each listing carries `state` (`kind` is `done`, `now`, `auto`, `attention` or `later`: finished, your step, runs by itself, needs a fix from you, waiting for an earlier step; with a short `label` and one sentence `detail`; a listing in review while no shop is connected has `kind` `now` and a `detail` that ends with the step, connect payments) and `publish_check` (`last_at`, `next_at` = last check + 10 minutes while it still watches the listing, `result` is `waiting`, `not_added` (Soukbase could not put the item in your shop: its error, nothing for you to do), `mismatch`, `payout_mismatch`, `timeout` or `live`, `fields` the values the shop shows differently, `problem` the message about the problem (cause, then `step`), `who` who acts (`seller`, `soukbase` or `nobody`) and `act` where the step is done (`edit`, `command`, `recheck`, `connect`, `sell`, `apibase`, `support`, `page`, `allow`; null when there is no control), all four null without a problem; `POST /api/v1/listings/{id}/publish-check` is Check again; null for a draft, a listing in review and a rejected listing). The response also has your `notices` (newest 50: `id`, `kind`, `text`, `listing_id`, `created_at`, `read_at`, `withdrawn_at`: null while the notice is in force, the time Soukbase withdrew it when it was sent in error, `resolved`: true when the problem the notice names is already fixed) `telegram.linked` (whether a Telegram chat is linked for notices, see [/docs/sellers.md](/docs/sellers.md)) `hosted_files` (true when uploads are on for you) and `files_wired` (true when file delivery is connected for your shop); what both mean: [/docs/sellers.md](/docs/sellers.md#hosted-delivery). A notice is written when a listing is sent for review by you (kind `submitted`: no Telegram message, never counted as unread), approved, rejected (by a reviewer or by an automatic check), goes live, is hidden after a re-check or stops on a problem, and when your shop connection is released; `POST /api/v1/sellers/me/notices/read` with `{"ids": [...]}` marks notices read and answers `{"marked": n}`. A notice about a publish problem is `resolved` once that listing is live. `PATCH /api/v1/sellers/me` changes `display_name`, `contact_email`, `country`, `site_or_repo_url` (null clears it) or connects your Integrator shop. `integrator_slug: null` disconnects the shop (409 `shop_in_use` while a listing is approved, live or paused):
 
 ```
 curl -s -X PATCH https://soukbase.com/api/v1/sellers/me \
@@ -280,7 +275,7 @@ curl -s https://soukbase.com/api/v1/receipts/ORDER_ID
 | `too_large` | The file is bigger than the space left in your quota. | Send a smaller file or a zip. |
 | `type_not_allowed` | The type is not accepted for this category (executables never are). | Use a type accepted for the category: [the table](/docs/sellers.md#accepted-file-types). DOCX, XLSX and PPTX are never accepted; export PDF or EPUB. |
 | `type_mismatch` | The name or `Content-Type` does not match the real type. | Fix the extension. |
-| `pdf_scripts` | The PDF contains scripts, launch actions, embedded files or forms with code. | Save a clean copy without them. |
+| `pdf_scripts` | The PDF has JavaScript, launch actions, embedded files, rich media or XFA forms, an automatic action on open that is not a jump to a page of the same file, an action that sends form data or opens another file, or a link that runs script (`javascript:`) or opens a local file (`file:`). Web links, bookmarks, links inside the file and a jump to a page of the same file are accepted. | Open the PDF, print it to a new PDF (Print, Save as PDF) and upload that copy. |
 | `pdf_encrypted` | The PDF is password protected, so a per-order mark cannot be added. | Remove the password. |
 | `zip_unsafe` | The zip has encrypted entries, links, `..` paths, too many entries, a bomb ratio or forbidden file types. | Rebuild the zip. |
 | `malware` | The virus scan flagged the file. | Check your copy. |
@@ -292,7 +287,6 @@ Statuses `started`, `scanning`, `ready`, `rejected`, `expired` and `deleted` are
 
 ## Error codes
 
-<!-- generated:errors -->
 | Code | HTTP | Meaning | Next step |
 |---|---|---|---|
 | `validation_failed` | 400 | A field is missing, has the wrong type or is out of range. | Fix the field named in `field` and resend. |
@@ -307,6 +301,7 @@ Statuses `started`, `scanning`, `ready`, `rejected`, `expired` and `deleted` are
 | `rights_not_confirmed` | 400 | rights_confirmed is not true. | Confirm you have the right to sell the item. |
 | `price_below_min` | 422 | Price is under the minimum. | Use a price at or above the minimum. |
 | `price_above_cap` | 422 | Price is above the cap for the seller tier. | Lower the price; the cap is in the error text. |
+| `price_claim_mismatch` | 422 | The title or description states a price that is not the listing's price. | Make the stated amount equal to price_usdc, or reword the sentence. |
 | `price_format` | 400 | Price must be a decimal string with two decimals, e.g. "12.50". | Send the price as a string. |
 | `links_required` | 400 | delivery_mode instant_links needs 1 to 20 links. | Add links or change delivery_mode. |
 | `links_not_allowed` | 400 | links are only for delivery_mode instant_links. | Remove links or use instant_links. |
@@ -373,4 +368,3 @@ Statuses `started`, `scanning`, `ready`, `rejected`, `expired` and `deleted` are
 | `rate_limited` | 429 | Rate limit reached. | Wait for the Retry-After seconds. |
 | `not_found` | 404 | No such route. | See /openapi.json. |
 | `internal_error` | 500 | Unexpected server error. | Retry later. |
-<!-- /generated:errors -->

@@ -69,17 +69,28 @@
     var host = root.closest("form");
     var radios = function (n) { return qa('input[name="' + n + '"]', host); };
     var picked = function (n) { var r = radios(n).filter(function (x) { return x.checked; })[0]; return r ? r.value : ""; };
-    var lic = host.elements.attr_licence, time = host.elements.delivery_time;
+    var time = host.elements.delivery_time;
     /* on an edit page the saved delivery is the seller's own choice */
     var touched = host.id !== "sell-form" && !!picked("delivery_mode");
     function sync() {
       var mode = picked("delivery_mode"), cat = picked("category");
       qa("[data-for]", root).forEach(function (b) { b.hidden = b.getAttribute("data-for") !== mode; });
       qa(".catf", root).forEach(function (fs) { fs.hidden = fs.getAttribute("data-cat") !== cat; });
-      var cust = root.querySelector("[data-licence-custom]"); if (cust && lic) cust.hidden = lic.value !== "custom";
-      if (time) time.disabled = mode !== "webhook";
-      var adv = $("adv-webhook"); if (adv && mode === "webhook") adv.open = true;
+      /* licences: the chosen category's set (data-lic on its chip); a stored one (data-keep) stays; a choice that gets hidden moves to Personal use */
+      var catEl = radios("category").filter(function (x) { return x.checked; })[0], lset = catEl ? catEl.getAttribute("data-lic") || "" : null;
+      qa(".lic", root).forEach(function (l) {
+        var s = l.getAttribute("data-set"), r = l.querySelector("input");
+        l.hidden = lset !== null && s !== "" && s !== "x" && s !== lset && !r.hasAttribute("data-keep");
+      });
+      var on = radios("attr_licence").filter(function (x) { return x.checked; })[0];
+      if (on && on.closest(".lic").hidden) { var dflt = radios("attr_licence").filter(function (x) { return x.value === "personal-use"; })[0]; if (dflt) dflt.checked = true; }
+      var cust = root.querySelector("[data-licence-custom]"); if (cust) cust.hidden = picked("attr_licence") !== "custom";
+      /* Delivery time counts only for the webhook (T-0886: and is shown only then); the webhook block follows the chosen mode when it changes */
+      if (time) { time.disabled = mode !== "webhook"; var tf = time.closest(".field"); if (tf) tf.hidden = mode !== "webhook"; }
+      var adv = $("adv-webhook");
+      if (adv && mode !== lastMode) { lastMode = mode; adv.open = mode === "webhook"; }
     }
+    var lastMode;
     radios("delivery_mode").forEach(function (r) { r.addEventListener("change", function () { touched = true; sync(); }); });
     radios("category").forEach(function (r) {
       r.addEventListener("change", function () {
@@ -88,27 +99,15 @@
         sync();
       });
     });
-    if (lic) lic.addEventListener("change", sync);
+    radios("attr_licence").forEach(function (r) { r.addEventListener("change", sync); });
     sync();
-    /* T-0799: the price is written with two decimals ("3", "3.5", "3,50"); the purpose follows the description until the seller edits it;
-     * a refund window must be chosen (the page's data-error words; the server checks it too). */
-    var price = host.elements.price_usdc, desc = host.elements.description, purpose = host.elements.attr_purpose;
+    /* T-0799: the price is written with two decimals ("3", "3.5", "3,50"); a refund window must be chosen (the page's data-error words; the server checks it too).
+     * T-0866: the purpose is not copied from the description; left empty, the server takes the first sentence. */
+    var price = host.elements.price_usdc;
     if (price) price.addEventListener("blur", function () {
       var m = /^(\d+)(?:[.,](\d{1,2}))?$/.exec(price.value.trim());
       if (m) price.value = m[1] + "." + ((m[2] || "") + "00").slice(0, 2);
     });
-    if (desc && purpose) {
-      var purposeFrom = function (d) {
-        var t = d.trim().replace(/[ \t]+/g, " "), m = /^[^\n]*?[.!?](?=\s|$)/.exec(t), first = (m ? m[0] : t.split("\n")[0]).trim(), max = purpose.maxLength > 0 ? purpose.maxLength : 200;
-        if (first.length <= max) return first;
-        var cut = first.slice(0, max + 1), at = cut.lastIndexOf(" ");
-        return (at > 0 ? cut.slice(0, at) : cut.slice(0, max)).replace(/[\s,;:]+$/, "");
-      };
-      /* a stored purpose (edit page) or one the seller changed is theirs */
-      var own = purpose.value.trim() !== "" && (!!host.elements.stock || purpose.value !== purposeFrom(desc.value));
-      desc.addEventListener("input", function () { if (!own) purpose.value = purposeFrom(desc.value); });
-      purpose.addEventListener("input", function () { own = purpose.value.trim() !== ""; if (!own) purpose.value = purposeFrom(desc.value); });
-    }
     var refunds = radios("refund_window_days"), box = $("seg-refund_window_days");
     if (refunds.length && box) {
       var clear = function () { var o = $("f-refund_window_days-e"); if (o) o.remove(); };
@@ -161,13 +160,23 @@
     var anchor = el.type === "checkbox" ? el.closest("label") : (hint || el);
     anchor.parentNode.insertBefore(s, anchor.nextSibling);
   }
-  function banner(msg, link) {
+  /* links: [{ text, href }] or [{ text, click }]; each text is a part of msg, in order, and becomes a link */
+  function banner(msg, links) {
     var b = $("form-error"); b.textContent = ""; b.hidden = !msg; if (!msg) return;
-    b.innerHTML = ICON_WARN; var t = document.createElement("span"); t.textContent = msg; b.appendChild(t);
-    if (link) { var a = document.createElement("a"); a.href = link; a.textContent = msg.slice(msg.lastIndexOf(". ") + 2).replace(/\.$/, ""); t.textContent = msg.slice(0, msg.lastIndexOf(". ") + 2); t.appendChild(a); t.appendChild(document.createTextNode(".")); }
+    b.innerHTML = ICON_WARN; var t = document.createElement("span"); b.appendChild(t);
+    var rest = msg;
+    (links || []).forEach(function (l) {
+      var i = rest.indexOf(l.text); if (i < 0) return;
+      t.appendChild(document.createTextNode(rest.slice(0, i)));
+      var a = document.createElement("a"); a.href = l.href || "#"; a.textContent = l.text;
+      if (l.click) a.addEventListener("click", function (ev) { ev.preventDefault(); l.click(); });
+      t.appendChild(a); rest = rest.slice(i + l.text.length);
+    });
+    t.appendChild(document.createTextNode(rest));
     b.scrollIntoView && b.scrollIntoView({ block: "center" });
   }
-  function status(msg) { $("sell-status").textContent = msg || ""; }
+  /* the SIGN_NOTE line is hidden while a status shows a text (one line at a time) */
+  function status(msg) { $("sell-status").textContent = msg || ""; var n = $("sign-note"); if (n) n.hidden = !!msg; }
 
   /* ---- validation: the words of ruling §2.2; the server checks the same and the API stays the authority ---- */
   var handleState = "";
@@ -208,7 +217,7 @@
   function handleHelp(msg, kind) {
     var h = $("f-handle-h");
     if (kind === "bad" && msg) { h.textContent = ""; h.className = "help"; setErr("handle", msg); return; }
-    setErr("handle", ""); h.textContent = msg; h.className = "help" + (kind === "ok" ? " ok" : "");
+    setErr("handle", ""); h.textContent = msg || T.handle.hint; h.className = "help" + (kind === "ok" ? " ok" : "");
   }
   function slug(s) { return s.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40).replace(/-+$/, ""); }
   f("display_name").addEventListener("input", function () {
@@ -241,11 +250,11 @@
     var m = /-([A-Za-z]{2})\b/.exec((navigator.languages && navigator.languages[0]) || navigator.language || "");
     var code = m && m[1].toUpperCase();
     if (code && excluded.indexOf(code) < 0 && qa("option", c).some(function (o) { return o.value === code; })) {
-      c.value = code; $("f-country-h").textContent = T.country.suggested;
+      c.value = code; $("f-country-h").textContent = T.country.hint + " " + T.country.suggested;
     }
   })();
   f("country").addEventListener("change", function () {
-    $("f-country-h").textContent = "";
+    $("f-country-h").textContent = $("f-country-e") ? "" : T.country.hint;
     var bad = excluded.indexOf(val("country")) >= 0 ? T.country.excluded : "";
     if (bad || shownErr.country) { shownErr.country = bad; setErr("country", bad); }
   });
@@ -257,6 +266,26 @@
     qa(".spin", form).forEach(function (s) { s.hidden = !on; }); form.setAttribute("aria-busy", on ? "true" : "false");
   }
   function short(a) { return a.slice(0, 6) + "…" + a.slice(-4); }
+  /* T-0899: the form is right however the page is shown. A form the server rendered fresh (data-state="fresh") is emptied of the wallet on every
+   * pageshow, the first one and a return through the back-forward cache (event.persisted); a form rendered with errors or the manual block
+   * open (data-state="error") stays as the server sent it. The network keeps its server value: the manual path posts it. */
+  var chain0 = f("chain_id") && f("chain_id").type !== "select-one" ? f("chain_id").value : null;
+  function forgetWallet() {
+    if (form.getAttribute("data-state") !== "fresh") return;
+    f("address").value = "";
+    var c = f("chain_id");
+    if (c && c.options) qa("option", c).forEach(function (o) { o.selected = o.defaultSelected; }); else if (c && chain0 !== null) c.value = chain0;
+    $("wallet-chosen").hidden = true; $("wallet-short").textContent = "";
+    banner(""); status("");
+    manualBox.open = false;
+  }
+  window.addEventListener("pageshow", forgetWallet);
+  /* The wallet helper writes the new account into #f-address and fires "input" when the account is switched in the wallet (accountsChanged).
+   * What was said about the previous address goes; nothing is sent and no signature is asked: the next press of the button does that. */
+  f("address").addEventListener("input", function () {
+    banner(""); shownErr.address = ""; setErr("address", "");
+    var a = val("address"); if (/^0x[0-9a-fA-F]{40}$/.test(a)) $("wallet-short").textContent = short(a);
+  });
   function useWallet(r) {
     var chain = CHAINS.indexOf(r.chainId) >= 0 ? r.chainId : CHAINS[0];
     f("address").value = r.address; f("chain_id").value = String(chain);
@@ -291,7 +320,7 @@
           return res.json().catch(function () { return {}; }).then(function (j) {
             if (res.status === 200 && typeof j.message === "string") return j;
             if (res.status === 422 && j.errors) { showErrors(j.errors); throw handled(); }
-            if (j.code === "seller_exists") { banner(T.errors.exists, "/manage"); throw handled(); }
+            if (j.code === "seller_exists") { banner(T.errors.exists, [{ text: "Sign in", href: "/manage" }, { text: "change the wallet", href: "#wallet-change", click: changeWallet }]); throw handled(); }
             banner(j.error || T.errors.network); throw handled();
           });
         });
@@ -308,10 +337,13 @@
   var via = "wallet";
   $("submit-btn").addEventListener("click", function () { via = "wallet"; });
   $("manual-btn").addEventListener("click", function () { via = "manual"; });
-  $("wallet-change").addEventListener("click", function () {
-    if (busy || !wallet()) return;
+  /* the Change control; with the manual path (no wallet script) it puts the focus on the address field */
+  function changeWallet() {
+    if (busy) return;
+    if (!wallet()) { manualBox.open = true; f("address").focus(); return; }
     Promise.resolve().then(function () { return wallet().connect({ anyChain: true, force: true }); }).then(function (r) { if (!r.manual) useWallet(r); }, fail);
-  });
+  }
+  $("wallet-change").addEventListener("click", changeWallet);
   form.addEventListener("submit", function (ev) {
     if (busy) { ev.preventDefault(); return; }
     var manual = via === "manual"; via = "wallet";

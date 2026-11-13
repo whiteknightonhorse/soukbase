@@ -14,7 +14,7 @@
     too_large: "The file is bigger than the space you have left. Choose a smaller file.",
     type_not_allowed: "Use a type accepted for this category (table in /docs/sellers). DOCX, XLSX and PPTX are not accepted; export PDF or EPUB.",
     type_mismatch: "The content of the file does not match its extension. Save it in the format its name says, then choose it again.",
-    pdf_scripts: "The PDF has scripts or actions. Save a copy without them.",
+    pdf_scripts: "The PDF has scripts, attached files or automatic actions. Open it, choose Print, then Save as PDF, and upload that copy.",
     pdf_encrypted: "The PDF is encrypted. Save a copy without a password.",
     zip_unsafe: "The archive has unsafe entries: encrypted, links, odd paths or programs. Make a plain ZIP without them, then choose it again.",
     malware: "The file did not pass the virus check. Choose a clean copy; if you think the check is wrong, write to support@soukbase.com.",
@@ -22,6 +22,7 @@
     quota_exceeded: "You are over your 1 GiB of hosted files. Choose a smaller file, or write to support@soukbase.com.",
     service_full: "The files service is full. This is on our side. Try again in an hour."
   };
+  var REASON_LINK = { pdf_scripts: { href: "/docs/sellers.md#pdf-files", label: "PDF rules" } };
   var CHECKING_SUB = "Usually under a minute. You can send the listing now; the check finishes by itself.";
   var WAIT_TEXT = "Wait until the upload finishes.";
   var NOTE_REST = "Replacing the file sends this listing back to review.";
@@ -69,7 +70,7 @@
       case "scanning":
         return cur ? { state: "replacing", kind: "now", main: "Replacing " + curName, sub: "Checking the new file · the current file stays until it is ready.", btn: "" } : checking(up.name);
       case "ready": return ready(up.name, up.bytes, up.mime, up.sha256);
-      case "rejected": return { state: "rejected", kind: "attn", main: "File not accepted", sub: REASONS[up.reason] || "The file was not accepted. Choose another file; if it repeats, write to support@soukbase.com.", btn: "Choose another file" };
+      case "rejected": return { state: "rejected", kind: "attn", main: "File not accepted", sub: REASONS[up.reason] || "The file was not accepted. Choose another file; if it repeats, write to support@soukbase.com.", btn: "Choose another file", link: REASON_LINK[up.reason] || null };
       case "deleted": return { state: "deleted", kind: "plain", main: "File removed", sub: "Upload a file to deliver.", btn: "Choose a file" };
     }
     return describe(cur, "unavailable");
@@ -120,7 +121,7 @@
       var bar = s.pct === undefined ? "" : '<progress class="fb-bar" max="100" value="' + s.pct + '" aria-label="Upload"></progress>';
       row.className = "fb fb-" + s.kind;
       row.setAttribute("data-fb-state", s.state);
-      row.innerHTML = '<span class="fb-ic" aria-hidden="true">' + ICONS[s.kind] + '</span><span class="fb-t"><span class="fb-main">' + esc(s.main) + "</span>" + bar + '<span class="fb-sub">' + esc(s.sub) + "</span></span>" +
+      row.innerHTML = '<span class="fb-ic" aria-hidden="true">' + ICONS[s.kind] + '</span><span class="fb-t"><span class="fb-main">' + esc(s.main) + "</span>" + bar + '<span class="fb-sub">' + esc(s.sub) + (s.link ? ' <a href="' + esc(s.link.href) + '">' + esc(s.link.label) + "</a>" : "") + "</span></span>" +
         (s.btn ? picker(s.btn) : "") + (s.pct === undefined ? "" : '<button type="button" class="fb-cancel">Cancel</button>');
       wire();
       var note = el.querySelector("#fb-warn"); /* only the edit form of a listing in the shop has it */
@@ -195,6 +196,7 @@
       stop();
       var me = ++run; /* a new choice always mints a new upload */
       waited = 0; live = null; input.value = ""; busy = true;
+      input.dispatchEvent(new win.Event("change", { bubbles: true })); /* T-0872: the error about the earlier file leaves (manage.js) */
       show({ state: "uploading", name: file.name, loaded: 0, total: file.size });
       var body = { category: c.value };
       if (listingId) body.listing_id = listingId;

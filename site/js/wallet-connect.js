@@ -112,7 +112,7 @@
     }
     if (c === "timeout") { mem(2); return F("{W} did not answer in two minutes. If it is not set up yet, finish its setup, or choose another wallet.", "expired"); }
     if (c === 4100) return F("{W} has not authorised this site for that account. Connect again and approve the account in {w}.");
-    if (c === 4200) { mem(2); return F("{W} cannot sign a message (personal_sign). Choose another wallet or paste a signature."); }
+    if (c === 4200) { mem(2); return F("{W} cannot sign a message (personal_sign). Choose another wallet."); }
     if (c === 4900 || c === 4901) return F("{W} is disconnected from the network. Open {w}, check its connection, and try again.");
     if (c === 4902) return F("{W} does not know this network. Add it in {w}, then try again.");
     if (c === -32002) return F(/tab|active|focus/i.test(m) ? "{W} only answers while this tab is in front. Keep this tab active and try again." : "{W} already has a request open. Open {w}, finish or close that request, then try again.");
@@ -180,15 +180,17 @@
         img.width = 24; img.height = 24; img.alt = "";
         img.src = typeof w.icon === "string" && w.icon.indexOf("data:image/") === 0 && w.icon.length < 262144 ? w.icon : GENERIC;
         b.appendChild(img); b.appendChild(el("span", "wallet-name", w.name)); b.appendChild(el("span", "wallet-rdns", w.rdns));
-        if (w.provider === win.ethereum) b.appendChild(el("span", "tag", "browser default"));
         b.onclick = function () { pick(w); };
         box.appendChild(b);
       });
-      var paste = el("button", "wallet-paste", "No wallet here: paste a signature"), no = el("button", "link", "Cancel");
-      paste.onclick = function () { pick(null); }; no.onclick = cancel;
+      var no = el("button", "link", "Cancel"), more = el("a", "link", "Other wallets");
+      no.onclick = cancel;
+      /* no wallet in this list: close the chooser and open the manual path (the folded block of the form, its address field) */
+      more.href = "#sell-manual";
+      more.onclick = function (ev) { ev.preventDefault(); cancel(); var m = $("sell-manual"); if (m) m.open = true; var a = $("f-address"); if (a && a.focus) a.focus(); };
       box.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); cancel(); } });
-      box.appendChild(paste);
-      box.appendChild(el("p", "help", "Key-based wallets only. Smart-contract accounts (Coinbase Smart Wallet, Safe, passkey wallets) cannot sign for Soukbase yet. On a phone, open this page inside your wallet app's browser."));
+      box.appendChild(el("p", "help", "Use MetaMask, Rabby or another browser wallet. Phone: open this page in your wallet app."));
+      box.appendChild(more);
       box.appendChild(no);
       ($("wallet-row") || $("wallet-pick") || doc.body).appendChild(box);
       setState("choosing", "Choose a wallet");

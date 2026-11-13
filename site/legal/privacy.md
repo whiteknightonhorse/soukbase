@@ -1,4 +1,4 @@
-Version 1.4 - effective 2026-12-12 - sha256 c58a8e7af039334917aa9717eb9d66b95c6638b745c9dc093d270cc766b8eca4
+Version 1.5 - effective 2026-12-12 - sha256 090cab08cd2a16f85b44b32ba68d878c766d14bb71a6208ebedb914ef8e30051
 
 # Soukbase Privacy Policy
 
@@ -20,6 +20,7 @@ Payments run through the APIbase Integrator and produce public receipts that sho
 | Telegram chat id (only if you link a chat for seller notices; nothing else from Telegram is stored) | Send you the same notices that appear on your seller page | Until you unlink: `DELETE /api/v1/sellers/me/telegram` deletes it at once, or ask us (section 5) |
 | Country (seller form) | Sanctions and excluded-country checks | While the account exists |
 | IP address of requests | Abuse prevention and rate limits | 30 days |
+| Usage record of the catalogue: for a request to a page, the API, a feed or the MCP server, the time, the route, the listing, the step on the way to a purchase and its result or error code, and the name of the client program taken from the user-agent header (a browser is recorded only as "browser"). From 15 December 2026 also the search words and a visitor key: a code computed from the IP address and the user-agent with a secret that is replaced every day, so the key of one day cannot be matched with another day. The IP address and the full user-agent are not stored in this record. The record may also hold what the Integrator and the files service report about a quote or an order (created, refused, paid, expired, delivered, downloaded, error code), tied to the order number | See where buyers stop on the way to a purchase, which listings are read and bought, and which steps fail | Visitor key and search words: 30 days, then erased from the record; the rest holds no personal data and is kept |
 | Listing text and metadata (title, description, price, links, hashes) | Show the listing, review it, serve the feed | While live; rejected text for 30 days, then only a hash skeleton |
 | Moderation records (checks, decisions, reasons, strikes) | Run review, appeals and repeat-violation rules | Reports and IP notices 3 years; other records in the events journal |
 | Reports and IP notices, with the contact details of the sender | Handle disputes and takedowns | 3 years |
@@ -34,8 +35,8 @@ We do not collect private keys or seed phrases. We never ask for them. We do not
 
 ## 3. Who processes data for us
 
-- **APIbase Integrator** (https://apibase.pro/): runs checkout, delivery and receipts. It has its own privacy terms, and a seller's agreement with it is separate from ours. When you press Connect payments, we send from our server to APIbase your display name, seller page address, handle, country, contact email and wallet address, so that its registration form opens filled in and it can warn you if you sign there with another wallet; none of these values is put in the link, and we keep only the handoff id, its state and the shop slug.
-- **Telegram:** the operator receives approval notifications there. They carry listing titles only. If you link a chat for seller notices, our second bot sends the notice sentences to it; Telegram handles them under its own terms.
+- **APIbase Integrator** (https://apibase.pro/): runs checkout, delivery and receipts. It has its own privacy terms, and a seller's agreement with it is separate from ours. When you press Connect payments, we send from our server to APIbase your display name, seller page address, handle, country and wallet address, so that its registration form opens filled in and it can warn you if you sign there with another wallet; none of these values is put in the link, and we keep only the handoff id, its state and the shop slug.
+- **Telegram:** the operator receives approval notifications there. They carry listing titles only. If you link a chat for seller notices, our second bot sends the notice sentences to it; Telegram handles them under its own terms. The operator also receives there a daily summary of the usage record: counts, listing titles, client program names and error codes; no wallet address, no IP address and no visitor key.
 - **A model provider for moderation:** we send listing text to check it against the rules. We treat the text as data to classify, not as instructions. We do not send account data such as email and wallet address for this.
 - **Hosting:** the catalogue and the files service run on servers rented from a hosting provider. The web server logs requests, including IP address, as described above.
 - **The seller of an order:** learns the payer wallet of each order from the Integrator. If a marked copy is found shared without permission, we may tell the seller which order it was made for.
@@ -44,7 +45,7 @@ We do not sell personal data. The servers and the backup may be in different cou
 
 ## 4. Why we may process it
 
-Running the catalogue, your seller account and your notices: contract. Delivering a hosted file to the buyer of a paid order: the legitimate interest of the seller, the buyer and Soukbase in delivering what was paid for. Marking each personal copy and keeping the delivery ledger for 24 months: the legitimate interest of sellers and Soukbase in deterring and tracing copies shared without permission and in answering disputes, reports and takedown notices; the payment that names the same wallet is public in any case. Preventing fraud, abuse and sanctions breaches, and keeping records: legitimate interest and legal duty. You may object to processing based on legitimate interest (section 5); we cannot remove a mark from a copy already delivered.
+Running the catalogue, your seller account and your notices: contract. Delivering a hosted file to the buyer of a paid order: the legitimate interest of the seller, the buyer and Soukbase in delivering what was paid for. Keeping the usage record: the legitimate interest of Soukbase and of sellers in finding where a purchase fails and repairing it; the record is not used for advertising. Marking each personal copy and keeping the delivery ledger for 24 months: the legitimate interest of sellers and Soukbase in deterring and tracing copies shared without permission and in answering disputes, reports and takedown notices; the payment that names the same wallet is public in any case. Preventing fraud, abuse and sanctions breaches, and keeping records: legitimate interest and legal duty. You may object to processing based on legitimate interest (section 5); we cannot remove a mark from a copy already delivered.
 
 ## 5. Your rights
 

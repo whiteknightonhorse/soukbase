@@ -1,4 +1,4 @@
-Version 1.4 - effective 2026-12-12 - sha256 764cf96dec0c450c8f78bcdbee6315c057d82fa9ae1c132e0113f5e8b8ba7b6a
+Version 1.5 - effective 2026-12-12 - sha256 764cf96dec0c450c8f78bcdbee6315c057d82fa9ae1c132e0113f5e8b8ba7b6a
 
 # Soukbase Seller Agreement
 

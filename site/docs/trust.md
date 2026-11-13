@@ -42,7 +42,7 @@
 
 On the listing route, add `quote_pay_to` (the `pay.x402.payTo` of the quote you hold) and `quote_amount` (two decimals, for example `5.00`). The quote's payee is then compared with the bound wallet and with what Soukbase last read from the shop; any difference is `mismatch`. A request with these parameters is cached on its own URL for 60 seconds like any other. Get the quote with `POST` to the `quote_url` of the listing's `integrator` block, using its `quote_body` (see /how-agents-buy).
 
-Paid orders are counted as described in /docs/status.md. The live-mode orders are listed at /receipts, each with an `is_test` flag; test-mode orders are not listed there.
+Soukbase counts paid orders as /docs/status.md describes. /receipts lists the live-mode orders, each with an `is_test` flag; it does not list test-mode orders.
 
 ## Where the payee comes from
 
@@ -50,4 +50,4 @@ Soukbase reads the payout wallet from the seller's public shop at the Integrator
 
 ## For sellers
 
-A listing goes live only when `payee_binding.status` would be `verified` (see /docs/sellers.md). Once a day Soukbase checks every live listing again. If the shop now pays another wallet, the listing is paused with reason `payout_mismatch` and we write a notice to your seller page. It does not resume by itself: fix the payee in your shop, then make a material edit so the listing goes through review again. If the status is only `missing` or `expired`, the listing stays live, agents are told to ask, and we write a notice to your seller page. A shop that cannot be reached for a day is not judged and nothing is paused.
+A listing goes live only when `payee_binding.status` would be `verified` (see /docs/sellers.md). Once a day Soukbase checks every live listing again. If the shop now pays another wallet, we pause the listing with reason `payout_mismatch` and write a notice to your seller page. It does not resume by itself: fix the payee in your shop, then make a material edit so the listing goes through review again. If the status is only `missing` or `expired`, the listing stays live, agents are told to ask, and we write a notice to your seller page. A shop that cannot be reached for a day is not judged and nothing is paused.

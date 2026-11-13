@@ -6,7 +6,7 @@ A person approves every listing. No check approves anything by itself.
 
 ## What runs
 
-The checks have ids. They are listed here by name; the patterns and word lists behind them are not published.
+The checks have ids. This page lists them by name; the patterns and word lists behind them are not published.
 
 | Id | Check |
 |---|---|
@@ -17,7 +17,7 @@ The checks have ids. They are listed here by name; the patterns and word lists b
 | C5 | Text normalisation (look-alike letters, hidden and zero-width characters, spacing tricks) |
 | C6 | Prohibited-goods word lists in English, Russian and Spanish (coarse by design) |
 | C7 | Instructions aimed at a buyer's agent or model (prompt injection) |
-| C8 | Contact details and requests to pay outside the checkout |
+| C8 | Contact details and requests to pay outside the checkout; a link in a field that asks for references (Sources, the sample link) is not a contact detail and is checked as a link by C20 |
 | C9 | Personal data: card numbers, seed phrases and similar |
 | C10 | Secrets and private keys |
 | C11 | Third-party licence keys and credential lists |
@@ -29,7 +29,7 @@ The checks have ids. They are listed here by name; the patterns and word lists b
 | C25 | Seller identity: wallet, normalised email and site already tied to a rejection |
 | C26 | Policy check by a language model, reading the rule list at /aup.json |
 
-A listing that fails a hard check is rejected at once. The model check (C26) rejects by itself only for a row of section C of the list; a match with a row of section B, anything unclear, and any check that cannot run go to a person. If the model check cannot run, the listing stays in `pending_review` until it can.
+A hard check rejects a listing that fails it at once. The model check (C26) rejects by itself only for a row of section C of the list; a match with a row of section B, anything unclear, and any check that cannot run go to a person. If the model check cannot run, the listing stays in `pending_review` until it can.
 
 Files you upload for hosted delivery are scanned with ClamAV and gated by real type and, for PDF, zip and EPUB files, by their contents, before they can be delivered (see [/docs/sellers#hosted-delivery](/docs/sellers#hosted-delivery)). This is a filter, not a guarantee: a file that passes is not certified safe, and the checks above still apply to the listing.
 
@@ -41,7 +41,7 @@ A reviewer can ask for more information. The listing stays `pending_review` and 
 
 ## The rule list
 
-The prohibited-goods list is published as /legal/prohibited-goods.md. /aup.json is the same list as data: ids, titles, tests, severity and the check ids that apply, with the size of each keyword list and a `ruleset_hash`. The hash changes whenever the rule file changes.
+The prohibited-goods list is at /legal/prohibited-goods.md. /aup.json is the same list as data: ids, titles, tests, severity and the check ids that apply, with the size of each keyword list and a `ruleset_hash`. The hash changes whenever the rule file changes.
 
 ## Appeals
 

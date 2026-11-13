@@ -117,12 +117,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 #wallet-row{flex-wrap:wrap}
 .link{background:none;border:0;padding:0 4px;min-height:44px;font:inherit;font-size:13px;color:var(--ink);text-decoration:underline;text-decoration-color:#958F84;text-underline-offset:4px;cursor:pointer}.link:hover{text-decoration-color:var(--ink)}.link[hidden]{display:none}
 #wallet-chooser{flex:1 0 100%;display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
-.wallet-opt,.wallet-paste{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:8px 12px;border:1px solid #958F84;border-radius:8px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
-.wallet-opt:hover,.wallet-paste:hover{background:#F3EFE8}
+.wallet-opt{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:8px 12px;border:1px solid #958F84;border-radius:8px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.wallet-opt:hover{background:#F3EFE8}
 .wallet-opt img{flex:none;width:24px;height:24px}
 .wallet-name{font-weight:500}
 .wallet-rdns{font:12px/16px var(--mono);color:var(--muted);margin-right:auto}
-.wallet-paste{justify-content:center;border-style:dashed}
 .submit-row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:24px}
 .spin[hidden]{display:none}
 .spin .ic{animation:spin 1s linear infinite}
@@ -179,6 +178,8 @@ th{font-weight:500;color:var(--muted);font-size:13px}
 .help[hidden],.sell1-form .help:empty{display:none}
 .consent .check,.consent .check input{margin:0;align-items:flex-start}
 .consent .check input{margin-top:2px}
+.consent .ln{display:block}
+.consent-more{white-space:nowrap}
 .sign-row{display:flex;flex-direction:column;gap:12px;margin:8px 0 32px}
 .sign-row .banner{margin:0}
 .status{margin:0;font-size:14px;line-height:20px;font-weight:500}.status:empty{display:none}

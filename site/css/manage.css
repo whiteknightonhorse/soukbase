@@ -129,3 +129,12 @@
 #pv-md:checked~.pv-md{display:block}#pv-md:checked~.pv-page{display:none}
 .pv-actions{margin:0}
 @media (max-width:640px){.pv-frame,.pv-md{padding:16px}}
+
+/* T-0866: the licence list, each option with its words */
+.lics{border:0;padding:0;margin:0;min-width:0;display:grid;gap:8px}.lics legend{font-weight:500;font-size:14px;line-height:20px;padding:0;margin-bottom:6px}
+.lic{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border:1px solid #958F84;border-radius:8px;background:var(--card);cursor:pointer;margin:0;min-width:0}
+.lic[hidden]{display:none}.lic input:checked+.lic-t b{font-weight:700}
+.lic input{flex:none;margin:2px 0 0}.lic-t{display:grid;gap:2px;min-width:0}.lic-t b{font-weight:500}
+/* T-0886: "About the product" (always visible), the hidden Delivery time, the help line under a group heading */
+.lcol .field[hidden]{display:none}.lcol .about{display:flex;flex-direction:column;gap:16px;margin:0}.lcol .about-h{font-size:16px;line-height:24px;font-weight:600;margin:8px 0 0}
+.lcol .about .catf legend{font-size:14px;line-height:20px;font-weight:500;color:var(--ink);margin-bottom:8px}
