@@ -1,6 +1,6 @@
 /* Soukbase seller manage pages: progressive enhancement. Without this file every page works as plain HTML forms.
  * Sign-in page: one button (window.SoukbaseWallet from wallet-connect.js) connects, signs the session message,
- * then a real form POST to /manage/signin sets the cookie and redirects, as the no-JS path does.
+ * then a real form POST to /manage/signin sets the cookie and redirects, as the no-JS path does. The paste page gets "Sign with your wallet".
  * Overview: copy buttons (the publish command, the APIbase form values), local times, History read marks.
  * Listing form: an error leaves when its field is changed (T-0872).
  * Status watch (T-0878, T-0883): the page reloads itself when a listing's state changed, and says when it stops. */
@@ -121,36 +121,64 @@
     window.addEventListener("pageshow", function (e) { if (e.persisted) wa(1); });
     ws("watch-note"); wt();
   }
+  /* T-0908: the paste page (/sell/message answer): with a browser wallet "Sign with your wallet" signs the shown message and submits it as via=manual-with-wallet. */
+  var pb = $("sign-with-wallet");
+  if (pb && W()) {
+    var pf = pb.form, ps = pf.querySelector("[type=submit]");
+    W().ready(400).then(function (ok) { if (ok) { pb.hidden = false; ps.className = "btn btn-secondary"; } });
+    pb.addEventListener("click", function () {
+      pb.disabled = true;
+      W().connect({ anyChain: true }).then(function () {
+        return W().signMessage(pf.elements.message.value, pf.elements.address.value, { quiet: true });
+      }).then(function (sig) {
+        pf.elements.signature.value = sig; pf.elements.via.value = "manual-with-wallet";
+        HTMLFormElement.prototype.submit.call(pf);
+      }).catch(function (x) {
+        pb.disabled = false;
+        if (!(x && (x.userMessage || x.code === "cancelled"))) $("wallet-state").textContent = "Signature rejected. Nothing was sent. Approve the signature in your wallet to continue.";
+      });
+    });
+  }
   var f = $("signin-form");
   if (!f) return;
-  /* T-0885: with a browser wallet the submit button does it all: connect, fill address and chain, sign, post. #wallet-connect stays hidden.
-   * The texts come from the page (data-texts); the message lands in the closed "What you sign" (#wallet-fold, shown when signing starts, never opened). */
-  var T = JSON.parse(f.getAttribute("data-texts") || "{}"), err = $("form-error"), btn = f.querySelector("[type=submit]"), fold = $("wallet-fold"), man = $("signin-manual");
-  var has = function () { return !!(W() && W().wallets().length); };
-  var sync = function () { if (has() && !btn.disabled) { btn.textContent = T.button; if (!f.querySelector("[aria-invalid]")) man.open = false; } };
-  sync(); window.addEventListener("load", sync);
+  /* T-0908: the page is final as the server prints it: one primary button, the fold closed. A press asks the wallet (EIP-6963 again, up to 400 ms), connects,
+   * signs the session message and posts /manage/signin. No wallet: the fold opens and nothing is sent. Only "Continue by hand" is a plain POST to /sell/message.
+   * The message lands in the closed "What you sign" (#wallet-fold, shown when signing starts, never opened). Texts come from the page (data-texts). */
+  var T = JSON.parse(f.getAttribute("data-texts") || "{}"), err = $("form-error"), btn = $("signin-btn"), fold = $("wallet-fold"), man = $("signin-manual"), other = $("signin-other"), label = btn.textContent, byHand = false;
+  if (other) other.hidden = false;
   d.addEventListener("soukbase:wallet", function (e) { if (e.detail && e.detail.state === "signing") fold.hidden = false; });
-  f.addEventListener("submit", function (e) {
-    if (!has()) return; /* plain POST: the next page shows the message and a signature field */
-    e.preventDefault();
+  $("signin-manual-btn").addEventListener("click", function () { byHand = true; });
+  var back = function () { btn.disabled = false; btn.textContent = label; };
+  var none = function () { back(); man.open = true; f.elements.address.focus(); err.textContent = T.none; err.hidden = false; };
+  var run = function (o) {
     btn.disabled = true; btn.textContent = T.busy; err.hidden = true;
-    W().connect().then(function (r) {
-      f.elements.address.value = r.address;
-      var ch = f.elements.chain_id;
-      if (r.chainId && ch && ch.options && Array.prototype.some.call(ch.options, function (o) { return o.value === String(r.chainId); })) ch.value = String(r.chainId);
-      return W().sign("session", { address: r.address, chain_id: ch.value });
-    }).then(function (s) {
-      var g = d.createElement("form"); g.method = "post"; g.action = "/manage/signin";
-      [["message", s.message], ["signature", s.signature], ["to", f.elements.to ? f.elements.to.value : ""]].forEach(function (p) {
-        var i = d.createElement("input"); i.type = "hidden"; i.name = p[0]; i.value = p[1]; g.appendChild(i);
+    Promise.resolve(W() ? W().ready(400) : false).then(function (ok) {
+      if (!ok) { none(); return; }
+      return W().connect(o).then(function (r) {
+        f.elements.address.value = r.address;
+        var ch = f.elements.chain_id;
+        if (r.chainId && ch && ch.options && Array.prototype.some.call(ch.options, function (o) { return o.value === String(r.chainId); })) ch.value = String(r.chainId);
+        return W().sign("session", { address: r.address, chain_id: ch.value });
+      }).then(function (s) {
+        var g = d.createElement("form"); g.method = "post"; g.action = "/manage/signin";
+        [["message", s.message], ["signature", s.signature], ["to", f.elements.to ? f.elements.to.value : ""], ["via", "wallet"]].forEach(function (p) {
+          var i = d.createElement("input"); i.type = "hidden"; i.name = p[0]; i.value = p[1]; g.appendChild(i);
+        });
+        d.body.appendChild(g); g.submit();
       });
-      d.body.appendChild(g); g.submit();
     }).catch(function (x) {
-      btn.disabled = false; btn.textContent = T.button;
+      back();
       var e2 = x && x.body && x.body.errors;
       if (x && (x.userMessage || x.code === "cancelled")) return; /* wallet-connect.js already shows it in #wallet-state */
       err.textContent = (e2 && (e2.address || e2.chain_id)) || "Signature rejected. Nothing was sent. Approve the signature in your wallet to continue.";
       err.hidden = false;
     });
+  };
+  if (other) other.addEventListener("click", function () { if (!btn.disabled) run({ force: true, pick: true }); });
+  f.addEventListener("submit", function (e) {
+    var hand = byHand || man.contains(d.activeElement); byHand = false;
+    if (hand) return; /* plain POST: the next page shows the message and a signature field */
+    e.preventDefault();
+    if (!btn.disabled) run();
   });
 })();

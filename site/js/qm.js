@@ -16,48 +16,6 @@
     el.addEventListener("input", upd); upd();
   });
 
-  /* ---- "Next: connect payments" countdown (SELLER-UX-1110 ruling-1 S0.8; WCAG 2.2.1) ----
-   * JS only, never on reduced motion. 60 s, announced at the start and at 10 s through an aria-live="polite" span;
-   * "Stay here", Escape, and focus or hover inside the box stop or pause it. Without this file the link is all there is. */
-  function countdown(link) {
-    var box = link.closest(".success");
-    if (!box || box.querySelector(".cd") || link.getAttribute("data-countdown") !== "60") return;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var left = 60, paused = false, timer = null;
-    var p = document.createElement("p"); p.className = "help cd";
-    var lead = document.createTextNode("Taking you there in ");
-    var shown = document.createElement("span"); shown.id = "sell-countdown-s"; shown.setAttribute("aria-hidden", "true");
-    var live = document.createElement("span"); live.id = "sell-countdown-live"; live.className = "sr-only"; live.setAttribute("aria-live", "polite");
-    var stay = document.createElement("button"); stay.type = "button"; stay.id = "sell-stay"; stay.className = "linklike"; stay.textContent = "Stay here";
-    p.appendChild(lead); p.appendChild(shown); p.appendChild(live); p.appendChild(document.createTextNode(" \u00b7 ")); p.appendChild(stay);
-    link.parentNode.parentNode.insertBefore(p, link.parentNode.nextSibling);
-    var draw = function () { shown.textContent = left + " s"; };
-    var stop = function () {
-      if (timer === null) return;
-      clearInterval(timer); timer = null;
-      box.removeEventListener("mouseenter", hold); box.removeEventListener("focusin", hold);
-      box.removeEventListener("mouseleave", release); box.removeEventListener("focusout", release);
-      document.removeEventListener("keydown", onKey);
-    };
-    var cancel = function () { stop(); p.textContent = "You are staying on this page."; p.appendChild(live); live.textContent = "Staying on this page."; };
-    var hold = function () { paused = true; p.setAttribute("data-paused", "true"); };
-    var release = function () { paused = false; p.removeAttribute("data-paused"); };
-    var onKey = function (ev) { if (ev.key === "Escape") cancel(); };
-    box.addEventListener("mouseenter", hold); box.addEventListener("focusin", hold);
-    box.addEventListener("mouseleave", release); box.addEventListener("focusout", release);
-    document.addEventListener("keydown", onKey);
-    stay.addEventListener("click", cancel);
-    draw(); live.textContent = "Taking you to your seller page in 60 seconds. Press Escape or Stay here to stay on this page.";
-    timer = setInterval(function () {
-      if (paused) return;
-      left -= 1; draw();
-      if (left === 10) live.textContent = "Taking you to your seller page in 10 seconds.";
-      if (left <= 0) { stop(); location.assign(link.getAttribute("href")); }
-    }, 1000);
-  }
-  var nextLink = $("sell-next");
-  if (nextLink && !nextLink.closest("[hidden]")) countdown(nextLink);
-
   /* ---- listing form v2 (T-0783; /#sell step 3 and the /manage listing pages) ----
    * Choosing a category preselects its delivery (the radio's data-delivery, from rules/categories.json) unless the seller
    * picked a delivery themselves; only the chosen mode's block, the chosen category's fields and, for a custom licence,
@@ -65,6 +23,13 @@
    * and the server applies the category's delivery when none is chosen. */
   var lform = document.querySelector(".lform");
   if (lform) listingForm(lform);
+  /* T-0912: "How to fill this in" opens the guide in the named window soukbase-guide, a narrow one at the right edge beside the form; without a script it is a plain link with the same target */
+  var gl = $("guide-link");
+  if (gl) gl.addEventListener("click", function (ev) {
+    var w = 460, l = Math.max(0, (screen.availLeft || 0) + screen.width - w);
+    var win = window.open(gl.href, "soukbase-guide", "popup,width=" + w + ",height=" + Math.min(screen.availHeight || 800, 900) + ",left=" + l + ",top=" + (screen.availTop || 0));
+    if (win) { ev.preventDefault(); win.focus(); }
+  });
   function listingForm(root) {
     var host = root.closest("form");
     var radios = function (n) { return qa('input[name="' + n + '"]', host); };
@@ -162,7 +127,7 @@
   }
   /* links: [{ text, href }] or [{ text, click }]; each text is a part of msg, in order, and becomes a link */
   var existsFor = ""; /* T-0905: the address (lower case) a seller_exists answer was given for */
-  function banner(msg, links) {
+  function banner(msg, links, buttons) {
     var b = $("form-error"); b.textContent = ""; b.hidden = !msg; if (!msg) { existsFor = ""; return; }
     b.innerHTML = ICON_WARN; var t = document.createElement("span"); b.appendChild(t);
     var rest = msg;
@@ -174,6 +139,13 @@
       t.appendChild(a); rest = rest.slice(i + l.text.length);
     });
     t.appendChild(document.createTextNode(rest));
+    if (buttons) {
+      var row = document.createElement("span"); row.className = "row"; b.appendChild(row);
+      buttons.forEach(function (x) {
+        var k = document.createElement("button"); k.type = "button"; k.id = x.id; k.className = x.cls; k.textContent = x.text;
+        k.addEventListener("click", x.click); row.appendChild(k);
+      });
+    }
     b.scrollIntoView && b.scrollIntoView({ block: "center" });
   }
   /* the SIGN_NOTE line is hidden while a status shows a text (one line at a time) */
@@ -323,7 +295,7 @@
           return res.json().catch(function () { return {}; }).then(function (j) {
             if (res.status === 200 && typeof j.message === "string") return j;
             if (res.status === 422 && j.errors) { showErrors(j.errors); throw handled(); }
-            if (j.code === "seller_exists") { banner(T.errors.exists, [{ text: "Sign in", href: "/manage" }, { text: "change the wallet", href: "#wallet-change", click: changeWallet }]); existsFor = val("address").toLowerCase(); throw handled(); }
+            if (j.code === "seller_exists") { banner(T.errors.exists, null, [{ id: "exists-signin", cls: "btn btn-primary", text: T.existsButtons.signIn, click: signInHere }, { id: "exists-other", cls: "btn btn-secondary", text: T.existsButtons.other, click: changeWallet }]); existsFor = val("address").toLowerCase(); throw handled(); }
             banner(j.error || T.errors.network); throw handled();
           });
         });
@@ -336,6 +308,26 @@
         HTMLFormElement.prototype.submit.call(form); /* the page moves on; the button stays busy */
       });
     }).catch(function (err) { status(""); loading(false); fail(err); });
+  }
+  /* T-0908: "Sign in with this wallet" (banner of a wallet that has a seller page): the session message for the same address, one quiet signature, then /manage/signin opens the seller page */
+  function signInHere() {
+    if (busy) return;
+    var a = val("address"); loading(true); status(T.status.sign);
+    fetch("/sell/message", { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify({ stage: "session", address: a, chain_id: val("chain_id") }) })
+      .then(null, function () { var e = new Error("network"); e.code = "network"; throw e; })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (j) {
+          if (res.status === 200 && typeof j.message === "string") return j;
+          banner(j.error || T.errors.network); throw handled();
+        });
+      }).then(function (m) {
+        return wallet().signMessage(m.message, a, { quiet: true }).then(function (sig) {
+          status(T.status.creating);
+          var g = document.createElement("form"); g.method = "post"; g.action = "/manage/signin";
+          [["message", m.message], ["signature", sig], ["via", "wallet"]].forEach(function (p) { var i = document.createElement("input"); i.type = "hidden"; i.name = p[0]; i.value = p[1]; g.appendChild(i); });
+          document.body.appendChild(g); HTMLFormElement.prototype.submit.call(g);
+        });
+      }).catch(function (err) { status(""); loading(false); fail(err); });
   }
   var via = "wallet";
   $("submit-btn").addEventListener("click", function () { via = "wallet"; });

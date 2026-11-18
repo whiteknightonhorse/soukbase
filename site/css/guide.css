@@ -1,0 +1,12 @@
+/* /docs/listing-form (T-0912): the controls are the form's own, read-only; their label and help sit in the section above them. */
+.guide{max-width:46rem}
+.g-part{margin:2.2rem 0 .6rem;font-size:1.15rem}
+.g-sec{margin:0 0 1.6rem;padding:1rem 0 0;border-top:1px solid var(--line,#E4DDD1)}
+.g-label{margin:0 0 .2rem;font-size:1rem}
+.g-help,.g-ex{margin:.1rem 0;color:var(--muted,#5E6862)}
+.g-ex-t{font-style:normal;white-space:pre-line;color:inherit}
+.g-ex-t::before,.g-ex-t::after{content:""}
+.g-control{margin:.6rem 0 .3rem;pointer-events:none}
+.g-control .lab,.g-control .help,.g-control legend,.g-control .count{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.g-again{margin-top:.2rem}
+.g-control .cat-groups{display:block}

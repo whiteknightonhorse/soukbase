@@ -1,6 +1,7 @@
 /* Soukbase browser wallet helper (cards 0712, 0729, 0798). Vanilla ES2020. window.SoukbaseWallet:
  * connect({anyChain, force}) -> {address, chainId, manual?}: chooser if needed; anyChain skips the chain check
- * wallets() -> [{name, rdns}]; signMessage(msg, addr, {quiet}) -> 0x sig (quiet: message not shown)
+ * wallets() -> [{name, rdns}]; ready(ms) -> true when a wallet is known, asking EIP-6963 again and waiting up to ms for one
+ * signMessage(msg, addr, {quiet}) -> 0x sig (quiet: message not shown)
  * sign(stage, values) -> {stage, message, signature}: message from POST /sell/message, then signMessage
  * Each state change is a "soukbase:wallet" event on document. The server builds the message; only ALLOWED methods
  * reach a provider (no transaction). Contract wallets (EIP-1271) are not supported. Nothing is asked of a wallet
@@ -20,7 +21,8 @@
   var cfg = { chains: [8453], timeoutMs: 120000, messageUrl: "/sell/message" };
   var user = win.SoukbaseWalletConfig || {};
   Object.keys(user).forEach(function (k) { cfg[k] = user[k]; });
-  var attr = btn && btn.getAttribute("data-chain-ids");
+  var cfgEl = btn || $("signin-form"); /* the sign-in page has no #wallet-connect: its form carries the chain list and the note */
+  var attr = cfgEl && cfgEl.getAttribute("data-chain-ids");
   if (attr) cfg.chains = attr.split(",").map(Number).filter(Boolean);
 
   var KEY = "soukbase.wallet.rdns", RDNS = /^[A-Za-z0-9.-]{1,64}$/, CTRL = /[\u0000-\u001f\u007f-\u009f]/g;
@@ -61,6 +63,16 @@
     return l;
   }
   function byRdns(ws, r) { for (var i = 0; r && i < ws.length; i++) if (ws[i].rdns === r) return ws[i]; return null; }
+  /* T-0908: ask again and wait up to ms for the first announcement; resolves true when a wallet is known */
+  function ready(ms) {
+    ask();
+    if (entries().length) return Promise.resolve(true);
+    return new Promise(function (resolve) {
+      var t = 0, on = function () { if (entries().length) done(); }, done = function () { clearTimeout(t); win.removeEventListener("eip6963:announceProvider", on); resolve(entries().length > 0); };
+      win.addEventListener("eip6963:announceProvider", on);
+      t = setTimeout(done, ms);
+    });
+  }
   function wallets() { return entries().map(function (e) { return { name: e.name, rdns: e.rdns }; }); }
 
   function relabel() {
@@ -188,8 +200,8 @@
       var no = el("button", "link", "Cancel"), more = el("a", "link", "Other wallets");
       no.onclick = cancel;
       /* no wallet in this list: close the chooser and open the manual path (the folded block of the form, its address field) */
-      more.href = "#sell-manual";
-      more.onclick = function (ev) { ev.preventDefault(); cancel(); var m = $("sell-manual"); if (m) m.open = true; var a = $("f-address"); if (a && a.focus) a.focus(); };
+      more.href = "#" + ($("signin-manual") ? "signin-manual" : "sell-manual");
+      more.onclick = function (ev) { ev.preventDefault(); cancel(); var m = $("sell-manual") || $("signin-manual"); if (m) m.open = true; var a = $("f-address"); if (a && a.focus) a.focus(); };
       box.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); cancel(); } });
       box.appendChild(el("p", "help", "Use MetaMask, Rabby or another browser wallet. Phone: open this page in your wallet app."));
       box.appendChild(more);
@@ -233,7 +245,7 @@
       if (w.rdns) mem(1, w.rdns);
       return (anyChain ? rpc(p, "eth_chainId").then(function (id) { return parseInt(id, 16); }) : checkChain(p, retrySwitch)).then(function (chain) {
         attach();
-        setState("connected", "Connected: " + a + " via " + w.name + ". " + (btn && btn.getAttribute("data-signing-note") || "Signing happens when you send for review."), short(a));
+        setState("connected", "Connected: " + a + " via " + w.name + ". " + (cfgEl && cfgEl.getAttribute("data-signing-note") || "Signing happens when you send for review."), short(a));
         return { address: a, chainId: chain };
       });
     }).catch(function (e) { throw providerFail(e, "connect"); });
@@ -342,7 +354,7 @@
     });
   }
 
-  win.SoukbaseWallet = { connect: connect, wallets: wallets, signMessage: signMessage, sign: sign, state: function () { return current; } };
+  win.SoukbaseWallet = { connect: connect, wallets: wallets, ready: ready, signMessage: signMessage, sign: sign, state: function () { return current; } };
   ask();
   setState("idle");
 

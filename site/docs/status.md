@@ -6,11 +6,11 @@
 
 | Field | Meaning |
 |---|---|
-| `sellers_active` | Sellers with status `active`, by class: `first_party` (the operator's own wallets), `related` (declared as connected to the operator), `external` (everyone else). A seller that registered before the operator listed its wallet is moved from `external` to `first_party`, together with its orders, when the service next starts; no seller is ever moved to `external`. |
+| `sellers_active` | Sellers with status `active`, by class: `first_party` (the operator's own wallets), `related` (declared as connected to the operator), `external` (every other seller: the wallet is not on the operator's list; Soukbase has not checked that the seller is independent of the operator). A seller that registered before the operator listed its wallet is moved from `external` to `first_party`, together with its orders, when the service next starts; no seller is ever moved to `external`. |
 | `sellers_by_tier` | The same sellers, by class and tier T0 to T3 (tiers: /docs/trust.md). |
 | `listings_live` | Listings in status `live` whose seller is active, by seller class. Paused, removed and pending listings are excluded. |
 | `orders.external_orders` | Paid orders of external sellers. |
-| `orders.external_unique_payers` | Distinct paying wallets behind `external_orders`. This is the number to read for real outside demand. |
+| `orders.external_unique_payers` | Distinct paying wallets behind `external_orders`. It is an upper bound of outside demand: a payer is left out only when its wallet is one of the operator's or is on the test-wallet list (see What is excluded). |
 | `orders.related` | Paid orders of related sellers. |
 | `orders.first_party` | Paid orders of first-party sellers. |
 | `orders.dogfood_test` | Every order that is excluded from the four numbers above. |
@@ -20,7 +20,7 @@
 
 ## What is excluded
 
-The four main order numbers count only orders that are in live mode (`livemode` true), not flagged `is_test`, and not paid by one of the operator's own wallets. Sandbox purchases, test SKUs and the operator buying from its own shop go to `orders.dogfood_test` and nowhere else, so the main number cannot be padded by the operator. Orders of a first-party seller stay under `first_party` whoever paid, unless they are test or sandbox orders.
+The four main order numbers count only orders that are in live mode (`livemode` true), not flagged `is_test`, and not paid by one of the operator's own wallets or by a wallet on the test-wallet list that APIbase publishes at https://apibase.pro/policy/test-wallets.json. Soukbase reads that list once a day; a wallet that was on it stays excluded after it leaves the list. Sandbox purchases, test SKUs, the operator buying from its own shop and purchases from a listed test wallet go to `orders.dogfood_test` and nowhere else. Orders of a first-party seller stay under `first_party` whoever paid, unless they are test or sandbox orders.
 
 An order counts once the files service has reported the shop's signed order.paid; a later refund or dispute does not remove it from the count.
 

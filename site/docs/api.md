@@ -14,7 +14,7 @@ All bodies are JSON. All prices are strings with two decimals in USDC, for examp
 | POST /api/v1/sellers | wallet signature in body | Create a seller from a signed wallet message |
 | GET /api/v1/sellers/me | session token | Read your own seller record: profile, shop connection, your listings and notices |
 | POST /api/v1/sellers/me/notices/read | session token | Mark some of your seller notices read |
-| POST /api/v1/sellers/me/handoff | session token | Start the prefilled registration at apibase.pro: your data goes to APIbase from the server, the answer is the link to send the seller to |
+| POST /api/v1/sellers/me/handoff | session token | Start the prefilled registration at apibase.pro: your data goes to APIbase from the server, and your contact email only if send_contact_email is true; the answer is the link to send the seller to |
 | POST /api/v1/sellers/me/telegram/link | session token | Make a one-time link that connects a Telegram chat for your notices |
 | DELETE /api/v1/sellers/me/telegram | session token | Unlink Telegram: the stored chat id is deleted |
 | POST /api/v1/sellers/me/uploads | session token | Mint an upload link for a hosted_file listing's file, or hand over an instant_text listing's text (the files service holds the bytes) |
@@ -214,7 +214,7 @@ curl -s -X PATCH https://soukbase.com/api/v1/sellers/me \
   -d '{"integrator_slug":"acme-shop"}'
 ```
 
-The slug is checked at that moment; what is checked and what each answer means is in [/docs/sellers.md](/docs/sellers.md#connect-your-shop). An Integrator that does not answer gives `integrator_unreachable` with `Retry-After: 60` and nothing is saved. `POST /api/v1/sellers/me/handoff` (session, no body) sends your prefill to APIbase from the server (what is sent: [/docs/sellers.md](/docs/sellers.md#connect-your-shop)) and asks APIbase to show the permission step. For a shop that is already connected it sends only your wallet address, the seller reference and the handoff mode `grant`, so apibase.pro asks for the permission signature alone. It answers `{connect_url, expires_at}`; send the seller to `connect_url`, which carries only the handoff id. When the seller comes back, the shop is saved through the same check as `PATCH` above. While the handoff is switched off it answers `handoff_unavailable`.
+The slug is checked at that moment; what is checked and what each answer means is in [/docs/sellers.md](/docs/sellers.md#connect-your-shop). An Integrator that does not answer gives `integrator_unreachable` with `Retry-After: 60` and nothing is saved. `POST /api/v1/sellers/me/handoff` (session; optional body `{"send_contact_email": true}`, default false: the contact email goes with the prefill only then, and never for a shop that is already connected) sends your prefill to APIbase from the server (what is sent: [/docs/sellers.md](/docs/sellers.md#connect-your-shop)) and asks APIbase to show the permission step. For a shop that is already connected it sends only your wallet address, the seller reference and the handoff mode `grant`, so apibase.pro asks for the permission signature alone. It answers `{connect_url, expires_at}`; send the seller to `connect_url`, which carries only the handoff id. When the seller comes back, the shop is saved through the same check as `PATCH` above. While the handoff is switched off it answers `handoff_unavailable`.
 
 ### Get the request for your Integrator shop
 
@@ -240,7 +240,7 @@ curl -s https://soukbase.com/api/v1/sellers/acme-data
 
 `wallet_address` is the seller's bound payout wallet; `trust_url` and `listings_url` are the next calls for an agent that is choosing a seller.
 
-`counts.orders` leaves out test orders and orders paid from the operator's own wallets, the same rule as [/docs/status.md](/docs/status.md).
+`counts.orders` leaves out test orders and orders paid from the operator's own wallets or a listed test wallet, the same rule as [/docs/status.md](/docs/status.md).
 
 ### Report a listing or an order
 
