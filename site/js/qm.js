@@ -1,7 +1,8 @@
 /* Soukbase seller forms: progressive enhancement. Without this file every form is a plain POST (see src/web/sell.ts).
  * Wallet contract with site/js/wallet-connect.js (cards 0712, 0798), looked up as window.SoukbaseWallet:
- *   connect({ anyChain, force, pick }): Promise<{ address: string, chainId?: number, manual?: boolean }>
+ *   connect({ anyChain }): Promise<{ address: string, chainId?: number, manual?: boolean }>
  *   signMessage(message: string, address: string, { quiet }): Promise<string>   // personal_sign, rejects when the person declines
+ * Each connect() opens the wallet and asks for the account (T-0921); the account it returns is kept in memory here (walletAddr), never written into the hand-signing field #f-address.
  * When it is absent the form posts as plain HTML and the next page shows the message and a signature field. */
 (function () {
   "use strict";
@@ -126,10 +127,11 @@
     anchor.parentNode.insertBefore(s, anchor.nextSibling);
   }
   /* links: [{ text, href }] or [{ text, click }]; each text is a part of msg, in order, and becomes a link */
+  var walletAddr = "", walletChain = ""; /* T-0921: the account the wallet gave and its chain; the hand field #f-address is never written */
   var existsFor = ""; /* T-0905: the address (lower case) a seller_exists answer was given for */
   function banner(msg, links, buttons) {
     var b = $("form-error"); b.textContent = ""; b.hidden = !msg; if (!msg) { existsFor = ""; return; }
-    b.innerHTML = ICON_WARN; var t = document.createElement("span"); b.appendChild(t);
+    b.innerHTML = ICON_WARN; var t = document.createElement("span"); t.className = "banner-text"; b.appendChild(t);
     var rest = msg;
     (links || []).forEach(function (l) {
       var i = rest.indexOf(l.text); if (i < 0) return;
@@ -140,7 +142,7 @@
     });
     t.appendChild(document.createTextNode(rest));
     if (buttons) {
-      var row = document.createElement("span"); row.className = "row"; b.appendChild(row);
+      var row = document.createElement("span"); row.className = "banner-btns"; b.appendChild(row);
       buttons.forEach(function (x) {
         var k = document.createElement("button"); k.type = "button"; k.id = x.id; k.className = x.cls; k.textContent = x.text;
         k.addEventListener("click", x.click); row.appendChild(k);
@@ -245,7 +247,7 @@
   var chain0 = f("chain_id") && f("chain_id").type !== "select-one" ? f("chain_id").value : null;
   function forgetWallet() {
     if (form.getAttribute("data-state") !== "fresh") return;
-    f("address").value = "";
+    f("address").value = ""; walletAddr = ""; walletChain = "";
     var c = f("chain_id");
     if (c && c.options) qa("option", c).forEach(function (o) { o.selected = o.defaultSelected; }); else if (c && chain0 !== null) c.value = chain0;
     $("wallet-chosen").hidden = true; $("wallet-short").textContent = "";
@@ -253,26 +255,35 @@
     manualBox.open = false;
   }
   window.addEventListener("pageshow", forgetWallet);
-  /* The wallet helper writes the new account into #f-address and fires "input" when the account is switched in the wallet (accountsChanged).
-   * What was said about the previous address goes; nothing is sent and no signature is asked: the next press of the button does that. */
+  /* The hand field: typing another address removes what was said about the previous one. */
   f("address").addEventListener("input", function () {
     var a = val("address");
     if (a.toLowerCase() !== existsFor) { banner(""); shownErr.address = ""; setErr("address", ""); }
     if (/^0x[0-9a-fA-F]{40}$/.test(a)) $("wallet-short").textContent = short(a);
   });
-  function useWallet(r) {
-    if (r.address.toLowerCase() !== existsFor) { banner(""); shownErr.address = ""; setErr("address", ""); }
-    var chain = CHAINS.indexOf(r.chainId) >= 0 ? r.chainId : CHAINS[0];
-    f("address").value = r.address; f("chain_id").value = String(chain);
-    $("wallet-short").textContent = short(r.address); $("wallet-chosen").hidden = false;
+  /* The wallet path keeps the account in walletAddr and shows it in #wallet-short. */
+  function setAccount(a, chain) {
+    if (a.toLowerCase() !== existsFor) { banner(""); shownErr.address = ""; setErr("address", ""); }
+    walletAddr = a; if (chain) walletChain = String(chain);
+    $("wallet-short").textContent = short(a); $("wallet-chosen").hidden = false;
   }
+  function useWallet(r) { setAccount(r.address, CHAINS.indexOf(r.chainId) >= 0 ? r.chainId : CHAINS[0]); }
+  /* An account switched in the wallet (accountsChanged) arrives as the event "account"; nothing is sent and no signature is asked: the next press of the button does that. */
   document.addEventListener("soukbase:wallet", function (ev) {
+    var dt = ev.detail || {}, st = dt.state;
+    if (st === "account") { if (/^0x[0-9a-fA-F]{40}$/.test(dt.address || "")) setAccount(dt.address); return; }
     if (!busy) return;
-    var st = ev.detail && ev.detail.state;
-    if (st === "choosing") status(T.status.choose); else if (st === "connecting") status(T.status.connect); else if (st === "signing") status(T.status.sign);
+    if (st === "choosing") status(T.status.choose); else if (st === "accounts") status(""); else if (st === "connecting") status(T.status.connect); else if (st === "signing") status(T.status.sign);
   });
   function hidden(name, value) { var i = f(name); if (!i || i.type !== "hidden") { i = document.createElement("input"); i.type = "hidden"; i.name = name; form.appendChild(i); } i.value = value; }
   function formBody() { var o = {}; qa("input,select,textarea", form).forEach(function (e) { if (!e.name || e.type === "submit") return; if (e.type === "checkbox") { if (e.checked) o[e.name] = "yes"; } else o[e.name] = e.value; }); return o; }
+  /* the wallet path: the form's fields with the account and chain from memory in place of the hand fields */
+  function walletBody() { var o = formBody(); o.address = walletAddr; o.chain_id = walletChain; return o; }
+  /* the banner of a wallet that has a seller page: the text, then its two buttons */
+  function existsBanner(msg) {
+    banner(msg, null, [{ id: "exists-signin", cls: "btn btn-primary", text: T.existsButtons.signIn, click: signInHere }, { id: "exists-other", cls: "btn btn-secondary", text: T.existsButtons.other, click: changeWallet }]);
+    existsFor = walletAddr.toLowerCase();
+  }
   function handled() { var e = new Error("handled"); e.handled = true; return e; }
   function fail(err) {
     if (err && err.handled) return;
@@ -289,31 +300,33 @@
     Promise.resolve().then(function () { return wallet().connect({ anyChain: true }); }).then(function (r) {
       if (r.manual) { manualBox.open = true; banner(T.errors.noWallet); throw handled(); }
       useWallet(r);
-      return fetch("/sell/message", { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(formBody()) })
+      return fetch("/sell/message", { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify(walletBody()) })
         .then(null, function () { var e = new Error("network"); e.code = "network"; throw e; })
         .then(function (res) {
           return res.json().catch(function () { return {}; }).then(function (j) {
             if (res.status === 200 && typeof j.message === "string") return j;
             if (res.status === 422 && j.errors) { showErrors(j.errors); throw handled(); }
-            if (j.code === "seller_exists") { banner(T.errors.exists, null, [{ id: "exists-signin", cls: "btn btn-primary", text: T.existsButtons.signIn, click: signInHere }, { id: "exists-other", cls: "btn btn-secondary", text: T.existsButtons.other, click: changeWallet }]); existsFor = val("address").toLowerCase(); throw handled(); }
+            if (j.code === "seller_exists") { existsBanner(T.errors.exists.replace("{a}", short(walletAddr))); throw handled(); }
             banner(j.error || T.errors.network); throw handled();
           });
         });
     }).then(function (m) {
       status(T.status.sign);
-      return wallet().signMessage(m.message, val("address"), { quiet: true }).then(function (sig) {
+      return wallet().signMessage(m.message, walletAddr, { quiet: true }).then(function (sig) {
         status(T.status.creating);
-        hidden("stage", "bind"); hidden("message", m.message); hidden("signature", sig); hidden("via", "wallet");
-        form.setAttribute("action", "/sell/send");
-        HTMLFormElement.prototype.submit.call(form); /* the page moves on; the button stays busy */
+        /* a form of its own carries the wallet's account; the hand-signing field stays as it is */
+        var g = document.createElement("form"); g.method = "post"; g.action = "/sell/send";
+        var body = walletBody(); body.stage = "bind"; body.message = m.message; body.signature = sig; body.via = "wallet";
+        Object.keys(body).forEach(function (k) { var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = body[k]; g.appendChild(i); });
+        document.body.appendChild(g); HTMLFormElement.prototype.submit.call(g); /* the page moves on; the button stays busy */
       });
     }).catch(function (err) { status(""); loading(false); fail(err); });
   }
   /* T-0908: "Sign in with this wallet" (banner of a wallet that has a seller page): the session message for the same address, one quiet signature, then /manage/signin opens the seller page */
   function signInHere() {
     if (busy) return;
-    var a = val("address"); loading(true); status(T.status.sign);
-    fetch("/sell/message", { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify({ stage: "session", address: a, chain_id: val("chain_id") }) })
+    var a = walletAddr; loading(true); status(T.status.sign);
+    fetch("/sell/message", { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify({ stage: "session", address: a, chain_id: walletChain }) })
       .then(null, function () { var e = new Error("network"); e.code = "network"; throw e; })
       .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (j) {
@@ -332,16 +345,18 @@
   var via = "wallet";
   $("submit-btn").addEventListener("click", function () { via = "wallet"; });
   $("manual-btn").addEventListener("click", function () { via = "manual"; });
-  /* the Change control; with the manual path (no wallet script) it puts the focus on the address field */
+  /* the Change control and "Choose another account": the banner goes, the wallet opens and asks (the same connect() as the button); with the manual path (no wallet script) it puts the focus on the address field */
   function changeWallet() {
     if (busy) return;
     if (!wallet()) { manualBox.open = true; f("address").focus(); return; }
-    Promise.resolve().then(function () { return wallet().connect({ anyChain: true, force: true, pick: true }); }).then(function (r) {
+    var was = existsFor;
+    banner(""); loading(true); status(T.status.connect);
+    Promise.resolve().then(function () { return wallet().connect({ anyChain: true }); }).then(function (r) {
+      status(""); loading(false);
       if (r.manual) return;
-      var again = r.address.toLowerCase() === existsFor;
       useWallet(r);
-      if (again) { banner(T.errors.sameAccount.replace("{a}", short(r.address)), [{ text: "Sign in", href: "/manage" }]); existsFor = r.address.toLowerCase(); }
-    }, fail);
+      if (was && r.address.toLowerCase() === was) existsBanner(T.errors.sameAccount.replace("{a}", short(r.address)));
+    }).catch(function (err) { status(""); loading(false); fail(err); });
   }
   $("wallet-change").addEventListener("click", changeWallet);
   form.addEventListener("submit", function (ev) {

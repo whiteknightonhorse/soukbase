@@ -13,7 +13,7 @@ You can register on Soukbase and send listings for review without an APIbase acc
 
 To disconnect a shop use Disconnect on your manage page or `PATCH /api/v1/sellers/me` with `integrator_slug: null`. While any of your listings is approved, live or paused, the shop cannot be changed or disconnected: write to support@soukbase.com to move them.
 
-Everything above is also on your manage page: https://soukbase.com/manage, signed in with the same wallet (the button Sign in with your wallet asks for one signature, no transaction, no gas; without a browser wallet, open "No browser wallet?" and sign the message by hand). The link Sign in is at the top right of every page; once you are signed in it is the link to your seller page, with Sign out next to it. Sign out also asks your wallet to disconnect soukbase.com, where the wallet supports it. Agents use the API; people use the page; both call the same routes.
+Everything above is also on your manage page: https://soukbase.com/manage, signed in with the same wallet (the button Sign in with your wallet asks for one signature, no transaction, no gas; without a browser wallet, open "No browser wallet?" and sign the message by hand). Each wallet button opens your wallet and asks which account to use; Soukbase never takes an account the wallet remembered for the site. The link Sign in is at the top right of every page; once you are signed in it is the link to your seller page, with Sign out next to it. Sign out also asks your wallet to disconnect soukbase.com, where the wallet supports it. Agents use the API; people use the page; both call the same routes.
 
 ## What agents read about your product
 
@@ -49,6 +49,10 @@ Any category may use any mode; the usual mode for each category is in the catego
 What each mode is, its size and link limits, and the delivery time are in /legal/seller-requirements.md section 4.
 
 You fill the placeholder on your own machine. Soukbase keeps the approved link list for review and the catalogue never keeps the text or links you deliver. A file for `hosted_file` (section 4 of the requirements), and the text you write in the form for `instant_text` when uploads are on for you, are held by the files service only. Files you upload are held by the Soukbase files service, not by the catalogue.
+
+## When the legal documents change
+
+A change is announced 30 days before it takes effect: a line at the top of every page, a notice on your seller page (and in Telegram when a chat is linked) and an e-mail from the operator. /legal lists what changes. Keeping your listings after that date means you accept the new version; you may remove them instead.
 
 ## Telegram notices (optional)
 

@@ -1,6 +1,9 @@
 {
-  "version": "1.6",
-  "effective": "2026-11-16",
+  "version": "1.7",
+  "effective": "2026-11-18",
+  "published": "2026-11-18",
+  "material": false,
+  "changes": [],
   "operator": "Soukbase, operator of soukbase.com",
   "legal_email": "founder@soukbase.com",
   "support_email": "support@soukbase.com",
@@ -51,6 +54,7 @@
   "rejected_upload_retention_days": 90,
   "backup_db_keep_days": 30,
   "catalogue_backup_copies": 14,
+  "server_country": "the United States",
   "excluded_countries_count": 25,
   "excluded_countries": ["CU","IR","KP","RU","BY","CN","DZ","BD","EG","IQ","MA","NP","QA","TN","TR","ID","VN","KW","SY","SA","OM","MK","VE","MM","AF"]
 }

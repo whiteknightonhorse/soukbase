@@ -1,4 +1,4 @@
-Version 1.6 - effective 2026-11-16 - sha256 968ef4f8a84d3af5e67eabf4ae896e63b07d93321c37f50b481b1d0e87f1ee82
+Version 1.7 - effective 2026-11-18 - sha256 968ef4f8a84d3af5e67eabf4ae896e63b07d93321c37f50b481b1d0e87f1ee82
 
 # Soukbase Refunds
 

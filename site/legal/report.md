@@ -1,4 +1,4 @@
-Version 1.6 - effective 2026-11-16 - sha256 beaa737d305efc6d74041d7e6ac2e3f516023c7b923c588fdb110e60ccc8c137
+Version 1.7 - effective 2026-11-18 - sha256 beaa737d305efc6d74041d7e6ac2e3f516023c7b923c588fdb110e60ccc8c137
 
 # Soukbase Report and Takedown
 

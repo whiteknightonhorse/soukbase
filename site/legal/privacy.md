@@ -1,4 +1,4 @@
-Version 1.6 - effective 2026-11-16 - sha256 0cdd339ebff3558b3fd8485c18df82ad793e13de8e0aac09887475b9f772ce3b
+Version 1.7 - effective 2026-11-18 - sha256 71064067475ddf0b0f9df2956362903a5f0d5191e4697f40e5e3fbdd8ab745cb
 
 # Soukbase Privacy Policy
 
@@ -38,10 +38,10 @@ We do not collect private keys or seed phrases. We never ask for them. We do not
 - **APIbase Integrator** (https://apibase.pro/): runs checkout, delivery and receipts. It has its own privacy terms, and a seller's agreement with it is separate from ours. When you press Connect payments, we send from our server to APIbase your display name, seller page address, handle, country and wallet address, so that its registration form opens filled in and it can warn you if you sign there with another wallet; none of these values is put in the link, and we keep only the handoff id, its state, the shop slug and whether your contact email went with them. Your contact email goes with them only when you choose it at that press: the page names the address first and offers to connect without it. APIbase then holds the address as the contact email of your shop under its own privacy terms. For a shop that is already connected the email is never sent.
 - **Telegram:** the operator receives approval notifications there. They carry listing titles only. If you link a chat for seller notices, our second bot sends the notice sentences to it; Telegram handles them under its own terms. The operator also receives there a daily summary of the usage record: counts, listing titles, client program names and error codes; no wallet address, no IP address and no visitor key.
 - **A model provider for moderation:** we send listing text to check it against the rules. We treat the text as data to classify, not as instructions. We do not send account data such as email and wallet address for this.
-- **Hosting:** the catalogue and the files service run on servers rented from a hosting provider. The web server logs requests, including IP address, as described above.
+- **Hosting:** the catalogue and the files service run on servers rented from a hosting provider, in the United States. The web server logs requests, including IP address, as described above.
 - **The seller of an order:** learns the payer wallet of each order from the Integrator. If a marked copy is found shared without permission, we may tell the seller which order it was made for.
 
-We do not sell personal data. The servers and the backup may be in different countries, and your data may be processed outside the country where you live, including outside the European Economic Area and the United Kingdom, in countries without an adequacy decision. We make no promise about a storage region; ask founder@soukbase.com where the data is held today.
+We do not sell personal data. The servers are in the United States. The backup copy of the files service is kept on equipment that stays with the operator, who works from different countries. So your data is processed outside the European Economic Area and the United Kingdom, and the backup copy may be in a country without an adequacy decision. If the servers move to another country, a new version of this policy names it. Ask founder@soukbase.com where the backup copy is held today.
 
 ## 4. Why we may process it
 

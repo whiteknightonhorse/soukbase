@@ -24,6 +24,10 @@ The four main order numbers count only orders that are in live mode (`livemode` 
 
 An order counts once the files service has reported the shop's signed order.paid; a later refund or dispute does not remove it from the count.
 
+## Corrections
+
+- 17 November 2026: from 15 November 2026 to 17 November 2026 `orders.external_orders` and `orders.external_unique_payers` showed 1. That order was paid from a test wallet of the APIbase team and should not have been counted. It was moved to `orders.dogfood_test`.
+
 ## /healthz
 
 `GET /healthz` is internal: it answers only on 127.0.0.1 and is not served from outside (a public request gets 404). Read the public numbers on /status or `GET /api/v1/stats`. Behind it, `/healthz` returns `ok`, `version` and `db`, plus counts only: `uptime_sec`, `jobs` (`due`, `running`, `dead`), `moderation` (`oldest_unchecked_min`, `llm_error_streak`), `webhook_signature_failures_1h` and `last_backup_at`.

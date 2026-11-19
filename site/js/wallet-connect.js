@@ -1,9 +1,11 @@
 /* Soukbase browser wallet helper (cards 0712, 0729, 0798). Vanilla ES2020. window.SoukbaseWallet:
- * connect({anyChain, force}) -> {address, chainId, manual?}: chooser if needed; anyChain skips the chain check
+ * connect({anyChain}) -> {address, chainId, manual?}: wallet chooser if several wallets; anyChain skips the chain check. One behaviour on every call (T-0921):
+ *   wallet_revokePermissions (errors ignored), wallet_requestPermissions (4001 is the refusal, other errors ignored), eth_requestAccounts; the account used is the one returned now.
+ *   Several accounts returned: the person presses one (#wallet-accounts).
  * wallets() -> [{name, rdns}]; ready(ms) -> true when a wallet is known, asking EIP-6963 again and waiting up to ms for one
  * signMessage(msg, addr, {quiet}) -> 0x sig (quiet: message not shown)
  * sign(stage, values) -> {stage, message, signature}: message from POST /sell/message, then signMessage
- * Each state change is a "soukbase:wallet" event on document. The server builds the message; only ALLOWED methods
+ * Each state change is a "soukbase:wallet" event on document; an account switched in the wallet is {state:"account", address}. This file never writes a value into the form. The server builds the message; only ALLOWED methods
  * reach a provider (no transaction). Contract wallets (EIP-1271) are not supported. Nothing is asked of a wallet
  * before the person picks it, with one exception: a page opened at "#signed-out" (after Sign out) asks one wallet, the
  * remembered one or the only one present, once, wallet_revokePermissions for this site; every answer is ignored. */
@@ -26,7 +28,7 @@
   if (attr) cfg.chains = attr.split(",").map(Number).filter(Boolean);
 
   var KEY = "soukbase.wallet.rdns", RDNS = /^[A-Za-z0-9.-]{1,64}$/, CTRL = /[\u0000-\u001f\u007f-\u009f]/g;
-  var LABEL = { idle: "Connect wallet", choosing: "Choose a wallet", connecting: "Connecting…", signing: "Signing…", signed: "Signed", rejected: "Try again", error: "Try again", expired: "Try again", "no-wallet": "Connect wallet", "wrong-chain": "Switch to Base" };
+  var LABEL = { idle: "Connect wallet", choosing: "Choose a wallet", accounts: "Choose an account", connecting: "Connecting…", signing: "Signing…", signed: "Signed", rejected: "Try again", error: "Try again", expired: "Try again", "no-wallet": "Connect wallet", "wrong-chain": "Switch to Base" };
   var TEXT = {
     connecting: "Connecting to your wallet…",
     signing: "Waiting for your signature. Check your wallet.",
@@ -34,6 +36,7 @@
     rejected: "You declined the signature. Nothing was sent.",
     expired: "Signature request expired, try again.",
     "wrong-chain": "Your wallet is on another network. Switch to Base to continue.",
+    accounts: "Your wallet shared several accounts. Which one is the seller?",
     "no-wallet": "No browser wallet found. Sign the message by hand: use `cast wallet sign` or any wallet's \"sign message\", then paste the signature. Contract wallets cannot sign yet."
   };
   var current = "idle", address = "", chosen = null, sticky = "", forced = false, chooser = null;
@@ -93,7 +96,7 @@
       other.addEventListener("click", function () { forced = true; btn.click(); });
       row.appendChild(other);
     }
-    if (other) other.hidden = !(btn && (current === "idle" || current === "connected" || RETRY.indexOf(current) >= 0) && entries().length);
+    if (other) other.hidden = !(btn && (current === "idle" || current === "connected" || RETRY.indexOf(current) >= 0) && entries().length > 1);
   }
   function setState(name, text, label) {
     current = name; sticky = name === "idle" && label ? label : "";
@@ -119,7 +122,7 @@
   }
   /* one plain text per known provider error (E2E-WALLET-1102 D15) */
   function providerFail(err, what) {
-    if (err && err.userMessage) return err;
+    if (err && (err.userMessage || err.code === "cancelled")) return err;
     var c = err && err.code, m = (err && typeof err.message === "string") ? err.message : "", F = function (t, st) { return fail(st || "error", c, t); };
     if (c === 4001 || c === "ACTION_REJECTED" || (c == null && /reject|denied/i.test(m))) {
       return fail("rejected", 4001, what === "sign" ? "You declined the signature in {w}. Nothing was sent." : "You declined the connection in {w}. Nothing was sent.");
@@ -155,20 +158,21 @@
     var p = chosen.provider;
     if (typeof p.on !== "function") return;
     detach();
-    chosen.h = {
+    /* a handler that was detached stays inert even when the provider cannot remove it */
+    var hs = chosen.h = {
       accountsChanged: function (l) {
+        if (!chosen || chosen.h !== hs) return;
         var a = l && l[0];
         if (!a) return gone();
         if (typeof a !== "string" || !ADDR.test(a)) return;
         address = a;
-        var f = $("f-address");
-        if (f) { f.value = a; f.dispatchEvent(new Event("input", { bubbles: true })); }
         setState("connected", "Connected: " + a + " via " + chosen.name + ".", short(a));
+        try { doc.dispatchEvent(new CustomEvent("soukbase:wallet", { detail: { state: "account", address: a } })); } catch (x) { /* old browser */ }
       },
-      chainChanged: function (id) { if (cfg.chains.indexOf(parseInt(id, 16)) < 0) setState("wrong-chain"); },
-      disconnect: gone
+      chainChanged: function (id) { if (chosen && chosen.h === hs && cfg.chains.indexOf(parseInt(id, 16)) < 0) setState("wrong-chain"); },
+      disconnect: function () { if (chosen && chosen.h === hs) gone(); }
     };
-    Object.keys(chosen.h).forEach(function (k) { p.on(k, chosen.h[k]); });
+    Object.keys(hs).forEach(function (k) { p.on(k, hs[k]); });
   }
 
   var GENERIC = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path transform="matrix(1 0 0 -1 0 960)" fill="#14201A" d="M864 704h-640c-17.7 0-32 14.3-32 32s14.3 32 32 32h544c17.7 0 32 14.3 32 32s-14.3 32-32 32h-544c-53 0-96-43-96-96v0-512c0-53 43-96 96-96h640c35.3 0 64 28.7 64 64v0 448c0 35.3-28.7 64-64 64zM864 192h-640c-17.7 0-32 14.3-32 32v0 421.5c9.5-3.5 20.4-5.5 31.9-5.5 0 0 0.1 0 0.1 0h640zM672 432c0 26.5 21.5 48 48 48s48-21.5 48-48c0-26.5-21.5-48-48-48c-26.5 0-48 21.5-48 48z"/></svg>');
@@ -193,7 +197,7 @@
         b.setAttribute("data-rdns", w.rdns);
         img.width = 24; img.height = 24; img.alt = "";
         img.src = typeof w.icon === "string" && w.icon.indexOf("data:image/") === 0 && w.icon.length < 262144 ? w.icon : GENERIC;
-        b.appendChild(img); b.appendChild(el("span", "wallet-name", w.name)); b.appendChild(el("span", "wallet-rdns", w.rdns));
+        b.appendChild(img); b.appendChild(el("span", "wallet-name", w.name));
         b.onclick = function () { pick(w); };
         box.appendChild(b);
       });
@@ -208,6 +212,27 @@
       box.appendChild(no);
       ($("wallet-row") || $("wallet-pick") || doc.body).appendChild(box);
       setState("choosing", "Choose a wallet");
+      box.querySelector("button").focus();
+    });
+  }
+
+  /* several accounts came back: one button per short address; the pressed one is used */
+  function pickAccount(list) {
+    return new Promise(function (resolve, reject) {
+      var box = el("div"); box.id = "wallet-accounts"; box.setAttribute("role", "group"); box.setAttribute("aria-label", TEXT.accounts);
+      chooser = { el: box, reject: reject };
+      box.appendChild(el("p", "help", TEXT.accounts));
+      list.forEach(function (a) {
+        var b = el("button", "wallet-opt wallet-acct mono", short(a));
+        b.title = a; b.setAttribute("data-address", a);
+        b.onclick = function () { closeChooser(); resolve(a); };
+        box.appendChild(b);
+      });
+      var no = el("button", "link", "Cancel");
+      no.onclick = function () { closeChooser(true); setState("idle"); };
+      box.appendChild(no);
+      ($("wallet-row") || $("wallet-pick") || doc.body).appendChild(box);
+      setState("accounts", TEXT.accounts);
       box.querySelector("button").focus();
     });
   }
@@ -230,17 +255,22 @@
       prom.then(function (v) { clearTimeout(t); resolve(v); }, function (x) { clearTimeout(t); reject(x); });
     });
   }
-  function start(w, anyChain, pick) {
+  function start(w, anyChain) {
     if (chosen && chosen !== w) detach();
     if (mem() !== w.rdns) mem(2);
     chosen = w;
     var p = w.provider, retrySwitch = current === "wrong-chain";
+    detach(); /* the wallet's own answers while it forgets and asks again are not news */
     setState("connecting");
-    /* pick: the wallet shows its own account choice first; 4001 is the person's refusal, any other error means the method is unknown */
-    var perm = pick ? timed(rpc(p, "wallet_requestPermissions", PERMS)).then(null, function (e) { if (e && (e.code === 4001 || e.code === "ACTION_REJECTED")) throw e; }) : Promise.resolve();
-    return perm.then(function () { return timed(rpc(p, "eth_requestAccounts")); }).then(function (accts) {
-      var a = accts && accts[0];
-      if (typeof a !== "string" || !ADDR.test(a)) throw fail("error", "no_account", "{W} did not share an account. Unlock it, pick an account, and try again.");
+    /* every call: forget this site (no window, any error ignored), open the wallet's account window (4001 is the person's refusal, any other error means the method is unknown), then take the account the wallet returns now */
+    var ignore = function () {};
+    return timed(rpc(p, "wallet_revokePermissions", PERMS)).then(null, ignore)
+      .then(function () { return timed(rpc(p, "wallet_requestPermissions", PERMS)).then(null, function (e) { if (e && (e.code === 4001 || e.code === "ACTION_REJECTED")) throw e; }); })
+      .then(function () { return timed(rpc(p, "eth_requestAccounts")); }).then(function (accts) {
+      var list = (Array.isArray(accts) ? accts : []).filter(function (x, i, l) { return typeof x === "string" && ADDR.test(x) && l.indexOf(x) === i; });
+      if (!list.length) throw fail("error", "no_account", "{W} did not share an account. Unlock it, pick an account, and try again.");
+      return list.length > 1 ? pickAccount(list) : list[0];
+    }).then(function (a) {
       address = a;
       if (w.rdns) mem(1, w.rdns);
       return (anyChain ? rpc(p, "eth_chainId").then(function (id) { return parseInt(id, 16); }) : checkChain(p, retrySwitch)).then(function (chain) {
@@ -253,7 +283,7 @@
   function connect(o) {
     closeChooser(true);
     ask();
-    var any = !!(o && o.anyChain), ws = entries(), force = forced || !!(o && o.force), r = mem(), known = byRdns(ws, r), w = null;
+    var any = !!(o && o.anyChain), ws = entries(), force = forced, r = mem(), known = byRdns(ws, r), w = null;
     forced = false;
     if (!ws.length) return manualConnect();
     if (r && !known) mem(2);
@@ -262,8 +292,7 @@
       else if (chosen && ws.indexOf(chosen) >= 0 && RETRY.indexOf(current) >= 0) w = chosen;
       else w = known;
     }
-    var pick = !!(o && o.pick);
-    return w ? start(w, any, pick) : choose(ws).then(function (c) { return c ? start(c, any, pick) : manualConnect(); });
+    return w ? start(w, any) : choose(ws).then(function (c) { return c ? start(c, any) : manualConnect(); });
   }
   function manualConnect() {
     var field = $("f-address"), a = field ? String(field.value).trim() : "";

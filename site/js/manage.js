@@ -8,6 +8,9 @@
   "use strict";
   var d = document, $ = function (i) { return d.getElementById(i); };
   var W = function () { return window.SoukbaseWallet || null; };
+  /* T-0931: the legal-change line leaves on its effective date (the server prints it without reading the clock). */
+  var lc = $("legal-change");
+  if (lc && new Date().toISOString().slice(0, 10) >= lc.getAttribute("data-until")) lc.hidden = true;
   /* T-0851: a form that comes back with errors starts at its summary; each link in it jumps to the field. */
   var sum = d.querySelector(".errsum");
   if (sum) sum.focus();
@@ -141,7 +144,7 @@
   }
   var f = $("signin-form");
   if (!f) return;
-  /* T-0908: the page is final as the server prints it: one primary button, the fold closed. A press asks the wallet (EIP-6963 again, up to 400 ms), connects,
+  /* T-0908: the page is final as the server prints it: one primary button, the fold closed. A press asks the wallet (EIP-6963 again, up to 400 ms), connects (the wallet window opens and asks for the account, T-0921),
    * signs the session message and posts /manage/signin. No wallet: the fold opens and nothing is sent. Only "Continue by hand" is a plain POST to /sell/message.
    * The message lands in the closed "What you sign" (#wallet-fold, shown when signing starts, never opened). Texts come from the page (data-texts). */
   var T = JSON.parse(f.getAttribute("data-texts") || "{}"), err = $("form-error"), btn = $("signin-btn"), fold = $("wallet-fold"), man = $("signin-manual"), other = $("signin-other"), label = btn.textContent, byHand = false;
@@ -150,15 +153,15 @@
   $("signin-manual-btn").addEventListener("click", function () { byHand = true; });
   var back = function () { btn.disabled = false; btn.textContent = label; };
   var none = function () { back(); man.open = true; f.elements.address.focus(); err.textContent = T.none; err.hidden = false; };
-  var run = function (o) {
+  var run = function () {
     btn.disabled = true; btn.textContent = T.busy; err.hidden = true;
     Promise.resolve(W() ? W().ready(400) : false).then(function (ok) {
       if (!ok) { none(); return; }
-      return W().connect(o).then(function (r) {
-        f.elements.address.value = r.address;
-        var ch = f.elements.chain_id;
-        if (r.chainId && ch && ch.options && Array.prototype.some.call(ch.options, function (o) { return o.value === String(r.chainId); })) ch.value = String(r.chainId);
-        return W().sign("session", { address: r.address, chain_id: ch.value });
+      /* T-0921: every connect() opens the wallet and asks for the account; the account it returns goes into the request, never into the hand field */
+      return W().connect().then(function (r) {
+        var ch = f.elements.chain_id, cid = ch ? ch.value : "";
+        if (r.chainId && ch && ch.options && Array.prototype.some.call(ch.options, function (o) { return o.value === String(r.chainId); })) cid = String(r.chainId);
+        return W().sign("session", { address: r.address, chain_id: cid });
       }).then(function (s) {
         var g = d.createElement("form"); g.method = "post"; g.action = "/manage/signin";
         [["message", s.message], ["signature", s.signature], ["to", f.elements.to ? f.elements.to.value : ""], ["via", "wallet"]].forEach(function (p) {
@@ -174,7 +177,7 @@
       err.hidden = false;
     });
   };
-  if (other) other.addEventListener("click", function () { if (!btn.disabled) run({ force: true, pick: true }); });
+  if (other) other.addEventListener("click", function () { if (!btn.disabled) run(); });
   f.addEventListener("submit", function (e) {
     var hand = byHand || man.contains(d.activeElement); byHand = false;
     if (hand) return; /* plain POST: the next page shows the message and a signature field */
