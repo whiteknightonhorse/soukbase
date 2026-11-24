@@ -1,8 +1,9 @@
-/* /docs/listing-form: types each example into its control when the section scrolls into view, once; "Show again" repeats it.
- * Without this file, or with prefers-reduced-motion, the controls already hold the example (the server filled them in). */
+/* /docs/listing-form: the server prints every example whole and nothing plays by itself. The script shows the button under each section
+ * ("Show how it is filled in"); pressing it types that one example again, 45 ms per character, and the button comes back at the end.
+ * Without this file, or with prefers-reduced-motion, there is no button and the controls hold the example. */
 (function () {
   "use strict";
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !window.IntersectionObserver) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   var all = function (s, r) { return Array.prototype.slice.call(r.querySelectorAll(s)); };
   function play(sec) {
     var box = sec.querySelector(".g-control"), btn = sec.querySelector(".g-again");
@@ -22,11 +23,9 @@
       setTimeout(function () { pick.forEach(function (p) { p.checked = true; }); done(); }, 600);
     } else done();
   }
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); play(e.target); } });
-  }, { threshold: 0.6 });
   all(".g-sec", document).forEach(function (s) {
-    s.querySelector(".g-again").addEventListener("click", function () { play(s); });
-    io.observe(s);
+    var b = s.querySelector(".g-again");
+    b.hidden = false;
+    b.addEventListener("click", function () { play(s); });
   });
 })();

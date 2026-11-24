@@ -31,7 +31,7 @@
     plain: "",
     now: '<span class="fb-dot"></span>',
     auto: '<svg width="12" height="12" viewBox="0 0 12 12" focusable="false"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 3.2V6l1.8 1.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
-    ok: '<svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="12" fill="#0B7A44"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#FFFDF9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    ok: '<svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="12" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#FFFDF9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     attn: "!"
   };
   /* the no-JS link words and the picker words they become */
@@ -103,8 +103,9 @@
       if (!fmt || s.state !== "ready" || !src || !src.mime || fmt.value.trim() !== "" || fmt.hasAttribute("data-edited")) return;
       fmt.value = formatOf(src.mime);
     }
-    function picker(label) {
-      return '<label class="btn btn-secondary fb-act fb-pick"' + (el.querySelector("#fb-warn") && label === "Replace" ? ' aria-describedby="fb-warn"' : "") + '><input type="file" class="fb-file"><span>' + esc(label) + "</span></label>";
+    /* T-0941: the hidden input has a title that is the state (the file name when a file is ready, else the label), so the browser never shows "No file chosen" over a ready file; it takes no pointer events (CSS), the label is the click target */
+    function picker(label, name) {
+      return '<label class="btn btn-secondary fb-act fb-pick"' + (el.querySelector("#fb-warn") && label === "Replace" ? ' aria-describedby="fb-warn"' : "") + '><input type="file" class="fb-file" title="' + esc(name || label) + '"><span>' + esc(label) + "</span></label>";
     }
     function wire() {
       var f = row.querySelector(".fb-file");
@@ -122,7 +123,7 @@
       row.className = "fb fb-" + s.kind;
       row.setAttribute("data-fb-state", s.state);
       row.innerHTML = '<span class="fb-ic" aria-hidden="true">' + ICONS[s.kind] + '</span><span class="fb-t"><span class="fb-main">' + esc(s.main) + "</span>" + bar + '<span class="fb-sub">' + esc(s.sub) + (s.link ? ' <a href="' + esc(s.link.href) + '">' + esc(s.link.label) + "</a>" : "") + "</span></span>" +
-        (s.btn ? picker(s.btn) : "") + (s.pct === undefined ? "" : '<button type="button" class="fb-cancel">Cancel</button>');
+        (s.btn ? picker(s.btn, s.state === "ready" ? s.main : "") : "") + (s.pct === undefined ? "" : '<button type="button" class="fb-cancel">Cancel</button>');
       wire();
       var note = el.querySelector("#fb-warn"); /* only the edit form of a listing in the shop has it */
       if (note) {
@@ -241,7 +242,7 @@
 
     /* the server printed a link for the no-JS path; here it becomes the picker, with the words of the picker */
     var first = row.querySelector(".fb-act");
-    if (first) { var tmp = d.createElement("div"); tmp.innerHTML = picker(PICK[first.textContent] || first.textContent); first.parentNode.replaceChild(tmp.firstChild, first); wire(); }
+    if (first) { var tmp = d.createElement("div"); var fm = row.querySelector(".fb-main"); tmp.innerHTML = picker(PICK[first.textContent] || first.textContent, row.getAttribute("data-fb-state") === "ready" && fm ? fm.textContent : ""); first.parentNode.replaceChild(tmp.firstChild, first); wire(); }
     /* a page that opens with an upload being checked reads it; one stored in `started` shows FB6 and is not sent with the form */
     var st = el.getAttribute("data-upload-state");
     if (input.value && st === "started") input.value = "";

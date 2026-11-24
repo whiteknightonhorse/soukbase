@@ -29,6 +29,8 @@ The checks have ids. This page lists them by name; the patterns and word lists b
 | C25 | Seller identity: wallet, normalised email and site already tied to a rejection |
 | C26 | Policy check by a language model, reading the rule list at /aup.json |
 
+Example addresses such as example.com in a description are not checked; links to Soukbase and APIbase documentation are allowed.
+
 A hard check rejects a listing that fails it at once. The model check (C26) rejects by itself only for a row of section C of the list; a match with a row of section B, anything unclear, and any check that cannot run go to a person. If the model check cannot run, the listing stays in `pending_review` until it can.
 
 Files you upload for hosted delivery are scanned with ClamAV and gated by real type and, for PDF, zip and EPUB files, by their contents, before they can be delivered (see [/docs/sellers#hosted-delivery](/docs/sellers#hosted-delivery)). This is a filter, not a guarantee: a file that passes is not certified safe, and the checks above still apply to the listing.

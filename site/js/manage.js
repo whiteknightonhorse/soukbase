@@ -87,8 +87,13 @@
     hi.removeEventListener("toggle", once);
     fetch(hi.getAttribute("data-read-url"), { method: "POST", credentials: "same-origin", headers: { "content-type": "application/x-www-form-urlencoded" }, body: "ids=" + encodeURIComponent(hi.getAttribute("data-unread")) });
   });
+  /* T-0960: a link to #history (the "See sales" link) and a page load with that hash open the History fold; without script the link only scrolls to it. */
+  var ho = function () { if (hi && hi.tagName === "DETAILS") hi.open = true; };
+  if (location.hash === "#history") ho();
+  Array.prototype.forEach.call(d.querySelectorAll('a[href="#history"]'), function (a) { a.addEventListener("click", ho); });
   /* T-0878, T-0883: on <main data-watch-url data-watch=token> ask for the token every 30 s while visible, and at once when the tab is shown again
-   * (not within 5 s of the last ask, one in flight, 120 at most). New token: reload, or #watch-update when the seller is busy. A failed ask is tried
+   * (not within 5 s of the last ask, one in flight, 120 at most). New token: reload, or #watch-update when the seller is busy or a confirmation
+   * banner ([data-flash], T-0940) is on the page: the page that confirms the money step is never reloaded away. A failed ask is tried
    * again; sign-out, 403, 404, a redirect and the cap stop the watch and show #watch-stopped. Only `hidden` is toggled. */
   var wm = d.querySelector("main[data-watch-url]"), wn = 0, wf = 0, wl = 0, wp = 0, wx = 0;
   if (wm && window.fetch) {
@@ -113,7 +118,7 @@
         wf = 0;
         if (t !== 0 && t !== null) {
           if (t === wm.getAttribute("data-watch")) ws("watch-note");
-          else if (wb()) ws("watch-update");
+          else if (d.querySelector("[data-flash]") || wb()) ws("watch-update");
           else return location.reload();
         }
         if (t === 0 || wn >= 120) { wx = 1; ws("watch-stopped"); return; }

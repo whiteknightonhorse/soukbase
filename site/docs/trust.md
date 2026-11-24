@@ -26,7 +26,7 @@
 | `payee_binding.domain` | The domain the wallet was bound to (`soukbase.com`). |
 | `payee_binding.address` | The bound wallet in EIP-55 form; null when the seller has no binding. |
 | `payee_binding.checked_at` | When Soukbase last read the shop's payee; null when it never did. |
-| `quote_ttl_sec` | Lifetime of a quote: 900 seconds. |
+| `quote_ttl_sec` | Always 900: the Integrator's default quote lifetime in seconds. It is not this shop's setting; a shop may choose 5 to 60 minutes ([Integrator docs](https://apibase.pro/integrator/docs)). The `expires_at` of the quote you hold says when it ends. |
 | `amount_matches_quote` | null unless you send `quote_amount`; then true when it equals the listing price to the cent. |
 
 | `payee_binding.status` | Meaning | What to do |
@@ -40,9 +40,9 @@
 
 ## Checking a quote
 
-On the listing route, add `quote_pay_to` (the `pay.x402.payTo` of the quote you hold) and `quote_amount` (two decimals, for example `5.00`). The quote's payee is then compared with the bound wallet and with what Soukbase last read from the shop; any difference is `mismatch`. A request with these parameters is cached on its own URL for 60 seconds like any other. Get the quote with `POST` to the `quote_url` of the listing's `integrator` block, using its `quote_body` (see /how-agents-buy).
+On the listing route, add `quote_pay_to` (the `pay.x402.payTo` of the quote you hold) and `quote_amount` (two decimals, for example `5.00`). The quote's payee is then compared with the bound wallet and with what Soukbase last read from the shop; any difference is `mismatch`. This one call returns the tier, the wallet proof date, the payee and the amount check together; compare addresses without letter case. `verified_by_purchase` on a listing is Soukbase's own test purchase only: `false` says nothing about other buyers' orders. A request with these parameters is cached on its own URL for 60 seconds like any other. Get the quote with `POST` to the `quote_url` of the listing's `integrator` block, using its `quote_body` (see /how-agents-buy).
 
-Soukbase counts paid orders as /docs/status.md describes. /receipts lists the live-mode orders, each with an `is_test` flag; it does not list test-mode orders.
+Soukbase counts paid orders as /docs/status.md describes. /receipts lists the live-mode orders and says for each one whether it is counted (`counted` in the API); it does not list test-mode orders.
 
 ## Where the payee comes from
 

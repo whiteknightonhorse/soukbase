@@ -16,7 +16,7 @@
       inputSchema: {
         type: "object",
         properties: {
-          q: { type: "string", maxLength: 200, description: "Words to search in title, description and category." },
+          q: { type: "string", maxLength: 200, description: "Words to search; word endings ignored. All must match, else any." },
           category: { type: "string", enum: ["dataset", "prompt_set", "template", "report", "ebook_audio", "own_api_credits", "skill", "mcp_server", "workflow", "software", "creative_asset", "knowledge_base", "testing_qa", "business_intelligence", "localization", "education"] },
           price_min: { type: "string", pattern: "^\\d{1,6}(\\.\\d{1,2})?$", description: "Minimum price in USDC, for example 3 or 3.50." },
           price_max: { type: "string", pattern: "^\\d{1,6}(\\.\\d{1,2})?$", description: "Maximum price in USDC, for example 3, 3.5 or 5.00." },

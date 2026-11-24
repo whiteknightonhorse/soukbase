@@ -1,4 +1,4 @@
-Version 1.7 - effective 2026-11-18 - sha256 764cf96dec0c450c8f78bcdbee6315c057d82fa9ae1c132e0113f5e8b8ba7b6a
+Version 1.8 - effective 2026-11-23 - sha256 e59e8560cfd1a5161b0bb849a637e57f7dfba1a3c44b072af0dbc80a7e5bb8b0
 
 # Soukbase Seller Agreement
 
@@ -88,7 +88,7 @@ Until you reach tier T3 (10 paid orders from at least 5 distinct payers and no o
 ## 10. Fees
 
 10.1 Soukbase charges 0% during the pilot, and the Integrator's fee is 0% at the time of writing. Soukbase never deducts anything from a payment.
-10.2 Soukbase may introduce a fee only with at least 30 days' notice to your contact email and on soukbase.com, stating the fee, how it is collected and the start date. You may remove your listings before it takes effect.
+10.2 Soukbase may introduce a fee only with at least 30 days' notice to your contact email and on soukbase.com, stating the fee, how it is collected and the start date. You may remove your listings before it takes effect. A fee is a material change under section 13.
 
 ## 11. Your responsibility; indemnity
 
@@ -102,7 +102,7 @@ You are responsible for your goods, the files you upload, listings, content, del
 
 ## 13. Changes
 
-We publish each version with a version number, an effective date and a sha256 hash in the first line of the document. Since version 1.1 a published version is never edited in place: any change of wording gets a new version number. We give 30 days' notice by email for any change that increases your obligations or fees. Continued listing after the effective date means acceptance; you may remove your listings instead. Earlier versions and their hashes are kept, and we send the text you signed on request at founder@soukbase.com.
+We publish each version with a version number, an effective date and a sha256 hash in the first line of the document. Since version 1.1 a published version is never edited in place: any change of wording gets a new version number. We give 30 days' notice by email for any change that increases your obligations or fees. A change of fees, payouts or liability is a material change and needs your new signature: you sign the new version with your wallet before its effective date. If you have not signed by that date, your listings leave the catalogue until you sign; orders already paid are fulfilled under the version you last signed. For any other change, continued listing after the effective date means acceptance; you may remove your listings instead. Earlier versions and their hashes are kept, and we send the text you signed on request at founder@soukbase.com.
 
 ## 14. Acceptance
 

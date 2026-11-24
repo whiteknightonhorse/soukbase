@@ -1,4 +1,4 @@
-Version 1.7 - effective 2026-11-18 - sha256 699a3c285ba71977a39f05c368f30b315ce9faadc1c4abdc5668fc8da66b734f
+Version 1.8 - effective 2026-11-23 - sha256 699a3c285ba71977a39f05c368f30b315ce9faadc1c4abdc5668fc8da66b734f
 
 # Capsule Licence and Security Notice
 
